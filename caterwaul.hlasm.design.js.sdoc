@@ -29,14 +29,26 @@ And here is how they would be emitted (where dXiY is instruction Y of data strea
   d1i1 d1i2 ... d1in            ; basic block 2
   d1i1 d1i2 ... d1in            ; basic block 3
 
-The data stream model is particularly advantageous for EPIC architectures such as Itanium.
+The data stream model is particularly advantageous for EPIC architectures such as Itanium. Arbitrarily many data streams can be assigned to a basic block; the more the merrier barring
+inefficiencies in the block compiler.
 
 Control flow.
 Each basic block can be referenced as a jump target. Because of parallelism, there is a bit more subtlety than there normally is when choosing a jump target. For example, consider the aliasing
 problem: pointers A and B may or may not point to the same object. If they do, we can't assume the same kind of parallelism that we could otherwise. This is the perfect place to use a runtime
 conditional (well, provided that the gain justifies the additional overhead). For example:
 
-| goto parallel_case if pa == pb;
-  goto non_parallel_case;
+| goto non_parallel_case if pa == pb;
+  goto parallel_case;
 
+F-streams.
+Not all data streams embrace the side-effectful nature of assembly-level programming. Some of them represent inlined deterministic functions with no specified continuation; these are called
+F-streams. Specifically, consider the difference between these two data streams (and let's assume no overflow conditions):
 
+| // data stream 1              // data stream 2
+  z = x + y * y;                .out = .in1 + .in2 * .in2;
+  test z, x;
+  jne .c1
+  jmp .c2
+
+The first stream is configured with explicit continuations, so it has predicated jump instructions. The second, on the other hand, is a template ready to be used within another data stream.
+The advantage of the F-stream is that once a data stream has been marked as being functional, it can be inlined into other data streams at code-generation time.
