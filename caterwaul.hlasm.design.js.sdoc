@@ -1,4 +1,42 @@
 High-level assembler design | Spencer Tipping
 Licensed under the terms of the MIT source code license
 
+Introduction.
+The high-level assembler is designed to be a more usable way to write assembly programs. It features a reasonably consistent C-like base layer but ends up being significantly more expressive
+than C due to the fact that it is used in a first-class context; that is, Javascript provides abstraction over code generation and Caterwaul provides quotation to minimize overhead.
+
+This assembler is significantly different from other assemblers in that it does register allocation, optimization, and instruction interleaving. It does this by exposing a parallel interface;
+rather than writing a single sequential program, you specify multiple independent dataflows that can execute simultaneously (or in any order), and the assembler merges them together to
+maximize processor throughput. Because processor throughput is a non-trivial optimization problem, the explicit separation of data paths allows the assembler to emit several different
+alternatives and choose the one that runs fastest.
+
+Basic blocks and parallelism.
+Basic blocks differ from data-independent streams in that they each end in a link to another basic block. In this sense they are lower-level than data streams, though because of the coupling
+between control flow and data flow they aren't represented this way. Rather, each basic block is separated into one or more data-independent execution paths, and the block is compiled into an
+interleaved code segment at runtime. For example, here is a logical view of basic blocks and data streams:
+
+|   basic block 1      basic block 2      basic block 3
+  +---------------+  +---------------+  +---------------+
+  | data stream 1 |  | data stream 1 |  | data stream 1 |
+  +---------------+  +---------------+  +---------------+
+  +---------------+
+  | data stream 2 |
+  +---------------+
+
+And here is how they would be emitted (where dXiY is instruction Y of data stream X):
+
+| d1i1 d2i1 d2i2 d1i2 ...       ; basic block 1
+  d1i1 d1i2 ... d1in            ; basic block 2
+  d1i1 d1i2 ... d1in            ; basic block 3
+
+The data stream model is particularly advantageous for EPIC architectures such as Itanium.
+
+Control flow.
+Each basic block can be referenced as a jump target. Because of parallelism, there is a bit more subtlety than there normally is when choosing a jump target. For example, consider the aliasing
+problem: pointers A and B may or may not point to the same object. If they do, we can't assume the same kind of parallelism that we could otherwise. This is the perfect place to use a runtime
+conditional (well, provided that the gain justifies the additional overhead). For example:
+
+| goto parallel_case if pa == pb;
+  goto non_parallel_case;
+
 
