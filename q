@@ -963,10 +963,10 @@ __6999988eaf441c9b1282e03e1db427b5
 meta::message_color('state', 'purple');
 meta::message_color('states', 'yellow');
 meta::message_color('watch', 'blue');
-meta::note('queue', <<'__dd2421ba338dba8f0e3776d14eb38fbb');
+meta::note('queue', <<'__f1ee9a4275fa7f62f09975df00c0601f');
 Motivation.
-This project exists to make it simple to generate fast executable code for a functional process.
-__dd2421ba338dba8f0e3776d14eb38fbb
+This project exists to make it simple to generate fast executable code for dynamically-typed (or static, for that matter) functional languages. It's mostly used by Landshark.
+__f1ee9a4275fa7f62f09975df00c0601f
 
 meta::parent('/home/spencertipping/bin/notes', <<'__320d51928ec8e2e370d67d30abe059b5');
 function::note

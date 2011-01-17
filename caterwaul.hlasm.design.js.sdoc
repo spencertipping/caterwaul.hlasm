@@ -8,7 +8,7 @@ than C due to the fact that it is used in a first-class context; that is, Javasc
 This assembler is significantly different from other assemblers in that it does register allocation, optimization, and instruction interleaving. It does this by exposing a parallel interface;
 rather than writing a single sequential program, you specify multiple independent dataflows that can execute simultaneously (or in any order), and the assembler merges them together to
 maximize processor throughput. Because processor throughput is a non-trivial optimization problem, the explicit separation of data paths allows the assembler to emit several different
-alternatives and choose the one that runs fastest.
+alternatives and choose the one that runs fastest rather than using a predictive and/or heuristic approach.
 
 Basic blocks and parallelism.
 Basic blocks differ from data-independent streams in that they each end in a link to another basic block. In this sense they are lower-level than data streams, though because of the coupling
@@ -40,15 +40,39 @@ conditional (well, provided that the gain justifies the additional overhead). Fo
 | goto non_parallel_case if pa == pb;
   goto parallel_case;
 
-F-streams.
-Not all data streams embrace the side-effectful nature of assembly-level programming. Some of them represent inlined deterministic functions with no specified continuation; these are called
-F-streams. Specifically, consider the difference between these two data streams (and let's assume no overflow conditions):
+Instruction set.
+I'm going mostly object-oriented for this design. Data streams and blocks share an interface; each provides a sequence of assembled instructions. The instruction set, however, is fixed; these
+instruction groups are supported:
 
-| // data stream 1              // data stream 2
-  z = x + y * y;                .out = .in1 + .in2 * .in2;
-  test z, x;
-  jne .c1
-  jmp .c2
+| malloc(size), free(native int)
+  integer arithmetic operators + rol, ror
+  floating-point arithmetic operators
+  integer, float relational operators
+  push(variable), pop
+  goto(variable)
+  variable = *x
+  *x = variable
+  variable = immediate
+  syscall(int, ...)
 
-The first stream is configured with explicit continuations, so it has predicated jump instructions. The second, on the other hand, is a template ready to be used within another data stream.
-The advantage of the F-stream is that once a data stream has been marked as being functional, it can be inlined into other data streams at code-generation time.
+All of these are converted by a Javascript-like syntax macro that takes a function and returns the assembly for it. (Basically a small C-to-assembly compiler.) This language, however, is less
+complex than C and supports syntax macros and data stream annotations.
+
+  Data stream annotations.
+  Data streams are explicitly specified. For example, here is an algorithm without data streams:
+
+  | _int(k = pop(), x = pop(), y = pop()),
+    x += 5, y += 10,
+    x *= x, y *= y,
+    push(x + y),
+    goto(k),
+
+  Here is the same algorithm with data streams:
+
+  | _int(k = pop(), x = pop(), y = pop()),
+    ds[x += 5, x *= x],
+    ds[y += 10, y *= y],
+    push(x + y),
+    goto(k)
+
+  The semantics of this are that the data streams can be interleaved in any order without changing the program structure.
