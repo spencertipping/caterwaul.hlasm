@@ -2,9 +2,6 @@ High-level assembler design | Spencer Tipping
 Licensed under the terms of the MIT source code license
 
 Introduction.
-The high-level assembler is designed to be a more usable way to write assembly programs. It features a reasonably consistent C-like base layer but ends up being significantly more expressive
-than C due to the fact that it is used in a first-class context; that is, Javascript provides abstraction over code generation and Caterwaul provides quotation to minimize overhead.
-
 This assembler is significantly different from other assemblers in that it does register allocation, optimization, CPS-conversion, and instruction interleaving. It does this by exposing a
 parallel interface; rather than writing a single sequential program, you specify multiple independent dataflows that can execute simultaneously (or in any order), and the assembler merges them
 together to maximize processor throughput. Because x86 processor throughput is a non-trivial optimization problem, the explicit separation of data paths allows the assembler to emit several
@@ -32,6 +29,9 @@ And here is how they would be emitted (where dXiY is instruction Y of data strea
 The data stream model is particularly advantageous for EPIC architectures such as Itanium. Arbitrarily many data streams can be assigned to a basic block; the more the merrier barring
 inefficiencies in the block compiler.
 
+Variables.
+Since this is a functional assembler, you can bind variables to values. Each variable is a scalar quantity and is global.
+
 Instruction set.
 I'm going mostly object-oriented for this design. Data streams and blocks share an interface; each provides a sequence of assembled instructions. The instruction set, however, is fixed; these
 instructions are supported:
@@ -42,7 +42,7 @@ instructions are supported:
   {add,sub,and,or,xor,abs,mul,div}[s]f  :: ([s]f, [s]f) -> [s]f
   {not,neg,one}i :: i64 -> i64
   {mul}[u]i      :: (i64, i64) -> i64
-  call/cc        :: (i64, *) -> *
+  callcc         :: (i64, *) -> *
   get            :: i64 -> *
   set            :: (i64, *) -> *
 
@@ -58,8 +58,19 @@ they aren't reified in any way. To convert between them:
   Not all platforms use the same strategy for syscalls, and I'm not going to try to unify that at this level of abstraction. (Which is acceptable in part because the syscall numbers vary by
   platform anyway.) Each syscall instruction is prefixed by its architecture and OS:
 
-  | l32sys :: (i64, i64, i64) -> i64
-    l64sys :: (i64, i64, i64) -> i64
+  | lx32sys :: (i64, i64, i64) -> i64   // Linux x86-32
+    lx64sys :: (i64, i64, i64) -> i64   // Linux x86-64
+    li64sys :: ...                      // Linux Itanium
+    bx32sys :: ...                      // BSD x86-32
+
+  Platform-specific C FFIs.
+  Each platform has an ABI that specifies calling conventions for C-style functions. The assembler backends include architecture/platform-specific ways of interfacing with these functions.
+
+  | lx32std  :: (i64, i64, i64) -> i64
+    lx64std  :: (i64, i64, i64) -> i64
+    lx32fast :: (i64, i64, i64) -> i64
+    lx64fast :: (i64, i64, i64) -> i64
+    [...]
 
   Predication.
   The x86 instruction set is a pathological example of design; more intelligent folks elsewhere had the sense to implement proper predication. For both ARM and IA64 instruction sets, for
@@ -77,10 +88,22 @@ they aren't reified in any way. To convert between them:
   C stands for a condition code. This comes from a standard set of flags, including zero, sign, equal, carry, above, below, gt, lt, etc. Generally these are aliased in various ways on the
   target architecture; the backends resolve these aliases when translating the predicated instruction.
 
-Assembly semantics.
-The assembler is modeled as a functional language, which may seem like an odd way to do it. The assembly process looks like this:
+Assembler operation.
+The assembler is modeled as a functional language, which may seem like an odd way to do it. The assembly process looks like this (within a backend):
 
-| 1. CPS-convert.
-  2. Identify control-flow divergence and variant continuations; these become basic blocks.
-  3. Perform basic lifecycle analysis to determine value extents.
-  4. Delegate register/memory allocation to an architecture-specific backend. This backend is responsible for block placement and linking.
+| 1. Optionally CPS-convert. The assembler can also work with the higher-level expression format using DFS traversal, but CPS conversion can help.
+  2. Identify control-flow divergence and variant continuations; these are indirect jumps.
+  3. Perform basic lifecycle analysis to determine value extents (if CPS-converted).
+  4. Emit aligned blocks.
+
+Instruction format.
+Assembly is represented as an array of basic blocks, each of which is an array of data streams, each of which is an array of instructions. Each instruction is derived from its syntax-tree
+representation (though it is slightly different). For example, here's a program and its corresponding model (subject to significant revision as I find deficiencies):
+
+| start           = block(nprimes     = 10,
+                          marks       = alloc(nprimes),
+                          zero_loop_i = 0),
+  zero_loop       = block(pge(cmpi(zero_loop_i, nprimes))(callcc)((after_loop, 0)),
+                          set(addi(marks, shli(zero_loop_i, 8)), 0),
+                          zero_loop_i = addi(zero_loop_i, 1)),
+  after_loop      = block

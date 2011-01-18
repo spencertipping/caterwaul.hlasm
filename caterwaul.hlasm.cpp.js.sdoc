@@ -8,5 +8,6 @@ leverage this to generate performant C++ for a given Javascript workflow.
 
 This module is also a good place to look if you're interested in writing a new backend, as it is really simple.
 
-Incoming assembly format.
-Assembly arrives in basic blocks, each of which contains one or more data streams.
+Assembler operation.
+Assembly arrives in basic blocks, each of which contains one or more data streams. This backend doesn't rearrange anything; it just places data streams one after another. It also doesn't write
+particularly optimal C++ code. (A better approach, for instance, would be to use SSE2 vector intrinsics for parallel floating-point operations. No such cleverness here.)
