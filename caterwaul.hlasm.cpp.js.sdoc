@@ -5,3 +5,8 @@ Introduction.
 This module exists to generate C++ from high-level assembly definitions. It wouldn't be used much in production; it's primarily useful for me to debug stuff. Something useful may end up coming
 out of it though. If you let a Javascript program run in interpreted mode for some time, you can take the collected traces and emit specialized code for them. It's theoretically possible to
 leverage this to generate performant C++ for a given Javascript workflow.
+
+This module is also a good place to look if you're interested in writing a new backend, as it is really simple.
+
+Incoming assembly format.
+Assembly arrives in basic blocks, each of which contains one or more data streams.

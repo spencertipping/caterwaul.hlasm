@@ -61,17 +61,21 @@ they aren't reified in any way. To convert between them:
   | l32sys :: (i64, i64, i64) -> i64
     l64sys :: (i64, i64, i64) -> i64
 
-  Predication prefixes.
+  Predication.
   The x86 instruction set is a pathological example of design; more intelligent folks elsewhere had the sense to implement proper predication. For both ARM and IA64 instruction sets, for
   example, each instruction can be predicated by a branch-register selector rather than doing a separate jump. The caterwaul assembler follows that convention:
 
   | cmpi  :: (i64, i64) -> i64
     cmpsf :: (sf,  sf)  -> i64
     cmpf  :: (f,   f)   -> i64
-    pr :: i64 -> (a -> b, b) -> a -> b
-    p  :: i64 -> (a -> b) -> i64
+    prC :: i64 -> (a -> b) -> (a, b) -> b
+    pC  :: i64 -> (a -> b) -> a -> i64
 
-  The pr instruction always returns a b, and the p instruction returns the conditional bits.
+  The prC instruction always returns a b, and the pC instruction returns the conditional bits; the meaning of these bits is architecture-specific. Despite the opacity, though, the bits can be
+  used as a first-class value to store the result of previous tests. (This is important for various optimization purposes.)
+
+  C stands for a condition code. This comes from a standard set of flags, including zero, sign, equal, carry, above, below, gt, lt, etc. Generally these are aliased in various ways on the
+  target architecture; the backends resolve these aliases when translating the predicated instruction.
 
 Assembly semantics.
 The assembler is modeled as a functional language, which may seem like an odd way to do it. The assembly process looks like this:
