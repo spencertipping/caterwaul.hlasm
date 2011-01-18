@@ -98,12 +98,4 @@ The assembler is modeled as a functional language, which may seem like an odd wa
 
 Instruction format.
 Assembly is represented as an array of basic blocks, each of which is an array of data streams, each of which is an array of instructions. Each instruction is derived from its syntax-tree
-representation (though it is slightly different). For example, here's a program and its corresponding model (subject to significant revision as I find deficiencies):
-
-| start           = block(nprimes     = 10,
-                          marks       = alloc(nprimes),
-                          zero_loop_i = 0),
-  zero_loop       = block(pge(cmpi(zero_loop_i, nprimes))(callcc)((after_loop, 0)),
-                          set(addi(marks, shli(zero_loop_i, 8)), 0),
-                          zero_loop_i = addi(zero_loop_i, 1)),
-  after_loop      = block
+representation (though it is slightly different).

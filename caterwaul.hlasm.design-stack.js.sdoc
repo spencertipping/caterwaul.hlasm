@@ -1,0 +1,6 @@
+High-level assembler design (stack-based) | Spencer Tipping
+Licensed under the terms of the MIT source code license
+
+Introduction.
+After thinking about a functional approach to low-level assembly, I'm now considering using concatenative languages. Not sure how well this will work for register-based or highly concurrent
+architectures, but it's worth a shot before investing a lot of effort into CPS and similar.
