@@ -79,4 +79,4 @@ The assembler is modeled as a functional language, which may seem like an odd wa
 | 1. CPS-convert.
   2. Identify control-flow divergence and variant continuations; these become basic blocks.
   3. Perform basic lifecycle analysis to determine value extents.
-  4. Delegate register/memory allocation to an architecture-specific backend.
+  4. Delegate register/memory allocation to an architecture-specific backend. This backend is responsible for block placement and linking.
