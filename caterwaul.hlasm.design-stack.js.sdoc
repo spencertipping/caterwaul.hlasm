@@ -4,3 +4,62 @@ Licensed under the terms of the MIT source code license
 Introduction.
 After thinking about a functional approach to low-level assembly, I'm now considering using concatenative languages. Not sure how well this will work for register-based or highly concurrent
 architectures, but it's worth a shot before investing a lot of effort into CPS and similar.
+
+  Basis.
+  This language design is heavily influenced by the Joy language, created by Manfred von Thun. Joy is extremely well-designed and has many desirable properties, including finite extent for all
+  values (no GC required), an elegant approach for representing first-class code, algebraic properties that can be used for optimization, and a minimal set of fundamental combinators and data
+  structures.
+
+  I also considered Forth as a base. I ended up going with Joy instead because Forth requires a separate "compile" step, where special words such as IF and ELSE are translated into BRANCH.
+  Joy's approach of quotation makes more sense than Forth's more syntactically-transparent contexts.
+
+  Modifications to Joy.
+  Joy isn't quite suitable for high-performance computing as it stands. For one thing, it relies heavily on interpretation to execute most constructs such as binrec, linrec, etc -- the i
+  combinator is used to execute an arbitrary list, and this is presumably expensive. To fix this, I'm introducing a new primitive, fuse, that fuses a list into a single opaque instruction.
+  This is implemented by the backend and should optimize the code to a reasonable level. The backend is free to trace the code and perform additional optimizations as it sees fit.
+
+  Another modification is that this Joy has no symbol table. Rather, instructions are referred to by their addresses in memory. This eliminates all of the indirection generally associated with
+  interpreting a language; the dispatching logic is now just 'call $instruction' for uninlined code.
+
+  Because this is a low-level language, platform and architecture-specific interfaces to syscall and external C functions are provided. Joy is normally relatively pure; these of course break
+  that purity.
+
+  Finally, there is no RTTI. This is a big deal; Joy stores the type with each object, which allows it to perform checks on values. I'm not doing that, though; because performance is the top
+  priority there is no typechecking and no RTTI. Given this, how are heterogeneous lists encoded?
+
+  Encoding heterogeneous lists without RTTI.
+  First, it should be pointed out that not everything can be stored into a list. Lists are used for quoted code, not for general-purpose data storage. As such, it should be obvious that a list
+  can ultimately contain two types of things:
+
+  | 1. Function pointers
+    2. Cons cell pointers
+
+  This makes encoding considerably simpler, especially considering that valid code lists are never circular or otherwise pathological. So we end up with a memory representation like this:
+
+  | |<--- function space --->|<--- cons space --->|
+    |f1 f2 f3 ....... fn|         |cn ... c3 c2 c1|
+   function stack ptr ->|         |<- cons stack ptr (moves backwards)
+
+  Cons cells have the property that if A references B, then B's address is strictly greater than A's address. This follows naturally; consider that in order to allocate a cons cell that points
+  to another one, you'd have to already have a reference to the one being pointed to. However, if A references a function F, then F's address is strictly less than A's address. References are
+  encoded relative to the cons cell's address, so code references are negative and cons-cell references are positive. (Conveniently, this also allows us to encode each of these objects as a
+  32-bit integer rather than 64 bits, saving space in the cons tree. I don't ever anticipate having more than 4GB of quoted/unquoted code, and if you do then you're doing something horribly
+  wrong.)
+
+  External pointers, e.g. from the main data stack, are assumed to be used within their context; that is, using the i combinator against such a pointer assumes that the pointer is to a
+  compiled function, and using the fuse combinator against it assumes that the pointer is a list. The result of using these combinators against pointers of the wrong type is unspecified.
+
+  Code/cons memory management.
+  Compiled functions can't refer into the cons tree. Compilation is transitive; compiling a function A that contains quoted code B will contain instructions to build the cons tree for B rather
+  than referencing the tree directly. (This is required for correct semantics anyway.) This is important! In particular, it means that the cons stack can be moved arbitrarily relative to a
+  function's address.
+
+  The cons stack doesn't have the same property, however. Because conses can refer to functions, moving the cons stack X units forwards (relative to the function stack) involves subtracting(!)
+  X from each negative number in the cons stack. This in turn involves a lot of predication, but the advantages are that (1) it's a linear process (no indirection or traversal necessary), and
+  (2) it therefore has excellent cache locality. It also should have a very efficient representation in x86 SSE2.
+
+  Cons and code garbage collection.
+  Code is not required to be garbage-collected. This is because one doesn't generally compile an arbitrary amount of code only to stop referring to it later on. (I may revise this later if it
+  turns out to occur frequently.) Cons cells, on the other hand, are GC'd at regular intervals using a conservative generational collector. (See
+  http://en.wikipedia.org/wiki/Garbage_collection_(computer_science) for an overview of how this works.) Marking is done with the lowest three bits, which is possible since all cons cells are
+  8-byte aligned.
