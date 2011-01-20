@@ -1,0 +1,1 @@
+sdocp('test/cpp-print.js.sdoc', 'Basic C++ translation test.\nTest global printing functions.\n\ncaterwaul.clone(\'std seq continuation hlasm.cpp\')(function () {\n  console.log(caterwaul.hlasm.cpp({main: \'k10 kw [[. [.[a]z E tsj] [,w, Kn:i] /]]Z tsj\'}))})();\n');
