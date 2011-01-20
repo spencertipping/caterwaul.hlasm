@@ -1,1 +1,1 @@
-sdocp('test/cpp-basic.js.sdoc', 'Basic C++ translation test.\n\ncaterwaul.clone(\'std seq continuation hlasm.cpp\')(function () {\n  console.log(caterwaul.hlasm.cpp({main: \'k10 kw [[. [.[a]z E tsj] [,w,] /]]Z tsj\'}))})();\n');
+sdocp('test/cpp-basic.js.sdoc', 'Basic C++ translation test.\n\ncaterwaul.clone(\'std seq continuation hlasm.cpp\')(function () {\n  console.log(caterwaul.hlasm.cpp({main: \'k10 kw [[. [.[a]z E tsI] [,w,] /]]Z tsI\'}))})();\n');

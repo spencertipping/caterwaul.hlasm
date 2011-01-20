@@ -2,4 +2,4 @@ Basic C++ translation test.
 Test global printing functions.
 
 caterwaul.clone('std seq continuation hlasm.cpp')(function () {
-  console.log(caterwaul.hlasm.cpp({main: 'k10 kw [[. [.[a]z E tsj] [,w, Kn:*ik] /]]Z tsj'}, {trace: false}))})();
+  console.log(caterwaul.hlasm.cpp({main: 'k10 kw [[. [.[a]z E tsI] [,w, Kn:*ik] /]]Z tsI'}, {trace: false}))})();

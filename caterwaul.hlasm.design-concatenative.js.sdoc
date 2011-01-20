@@ -45,8 +45,7 @@ exactly one character. The following sections outline the available operations.
     abcd        integer addition, subtraction, multiplication, and divmod
     eE          increment, decrement
     fF          if, if tail-call
-    i           function call (pushes 64-bit return address onto the code stack)
-    j           tail call (doesn't manipulate the code stack in any way)
+    iI          function call (pushes 64-bit return address onto the code stack), tail call (doesn't manipulate the code stack in any way)
     kK          push 0, 1 onto the stack
     lL          integer less-than (signed), floating less-than
     mM          aligned allocate (size in bytes -> pointer), free (pointer)
@@ -55,6 +54,7 @@ exactly one character. The following sections outline the available operations.
     tT          push 2, 3 onto the stack
     vV          integer -> double, double -> integer
     w           swap top two stack entries
+    yY          fixed point: [x] y -> [[x] y] [x]i, and [x] Y -> [[x] Y] [x]I
     zZ          stash top entry, execute function, push stashed entry (Z does two)
 
   Instruction categories.
@@ -73,11 +73,14 @@ exactly one character. The following sections outline the available operations.
 
     Note that [] is a perfectly valid function; it serves as the identity or a no-op.
 
-    Tail calls are possible by using the j operator rather than i. This combinator operates identically to i, but does not push a new return address onto the call stack. The stack balance
-    isn't lost, however, since the function invoking j also doesn't pop its own frame. Rather, the new function inherits the caller's frame and return address and presumably handles the
+    Tail calls are possible by using the I operator rather than i. This combinator operates identically to i, but does not push a new return address onto the call stack. The stack balance
+    isn't lost, however, since the function invoking I also doesn't pop its own frame. Rather, the new function inherits the caller's frame and return address and presumably handles the
     cleanup as the original caller would have.
 
     As a sanity check, any tail call operators should immediately precede a ].
+
+    The y combinator works as it would in lambda-calculus. It invokes a function with a recursive step that repeats the process. Y is similar, but performs a tail call. It is up to the backend
+    to find an efficient way to compile this.
 
     Literals.
     The digits are used to build integers in decimal. This results in the bytecode reading naturally; for example, k14 results in the number 14 being on the stack top. The exact semantic of
@@ -114,8 +117,8 @@ exactly one character. The following sections outline the available operations.
     integer.
 
     Relational operators.
-    The only relational operators available are l and L, which determine whether one quantity is less than another. (The first operates on integers and the second floats.) If the value on the
-    stack top is less than the one below it, then a nonzero integer value will be pushed; otherwise zero will be pushed. Equality can be checked by the idiom ^!.
+    The only relational operators available are l, and L, which determine whether one quantity is less than than another. (Lowercase for integers, uppercase for floats.) True is represented by
+    an integer 1, false by integer 0. Equality can be checked using the idiom ^!.
 
     Conditionals.
     The ? function takes three entries, N, [f1], and [f2]. If N is nonzero, f1 is called; otherwise f2 is called. If [f1] and [f2] are directly quoted, ? is allowed to inline them (but is not
@@ -133,75 +136,75 @@ exactly one character. The following sections outline the available operations.
     Sum numbers.
     This function pops N and pushes the sum of the numbers from 1 to N inclusive. The stack layout is generally (loop continuation) (sum) (immediate).
 
-    | (n) kw [[. [.[a]z E tsj] [,w,] /]]Z tsj
+    | (n) kw [[. [.[a]z E tsI] [,w,] /]]Z tsI
 
     Here (n) is not part of the program, but illustrates the expected stack state. Simulating the execution of the program for a stack of (k5):
 
-    | k5 kw [[. [.[a]z E tsj] [,w,] /]]Z tsj
-      k k5 [[. [.[a]z E tsj] [,w,] /]]Z tsj
-      [. [.[a]z E tsj] [,w,] /] k k5 tsj
-      [. [.[a]z E tsj] [,w,] /] k k5 [. [.[a]z E tsj] [,w,] /] j        // note the tail call; no new stack entry
-      [. [.[a]z E tsj] [,w,] /] k k5 . [.[a]z E tsj] [,w,] /
-      [. [.[a]z E tsj] [,w,] /] k k5 k5 [.[a]z E tsj] [,w,] /           // tail call here as well
-      [. [.[a]z E tsj] [,w,] /] k k5 .[a]z E tsj
-      [. [.[a]z E tsj] [,w,] /] k k5 k5[a]z E tsj
-      [. [.[a]z E tsj] [,w,] /] k5 k5 E tsj
-      [. [.[a]z E tsj] [,w,] /] k5 k4 tsj
-      [. [.[a]z E tsj] [,w,] /] k5 k4 [. [.[a]z E tsj] [,w,] /] j
-      [. [.[a]z E tsj] [,w,] /] k5 k4 . [.[a]z E tsj] [,w,] /
-      [. [.[a]z E tsj] [,w,] /] k5 k4 k4 [.[a]z E tsj] [,w,] /
-      [. [.[a]z E tsj] [,w,] /] k5 k4 .[a]z E tsj
-      [. [.[a]z E tsj] [,w,] /] k5 k4 k4[a]z E tsj
-      [. [.[a]z E tsj] [,w,] /] k9 k4 E tsj
-      [. [.[a]z E tsj] [,w,] /] k9 k3 tsj
+    | k5 kw [[. [.[a]z E tsI] [,w,] /]]Z tsI
+      k k5 [[. [.[a]z E tsI] [,w,] /]]Z tsI
+      [. [.[a]z E tsI] [,w,] /] k k5 tsI
+      [. [.[a]z E tsI] [,w,] /] k k5 [. [.[a]z E tsI] [,w,] /] I        // note the tail call; no new stack entry
+      [. [.[a]z E tsI] [,w,] /] k k5 . [.[a]z E tsI] [,w,] /
+      [. [.[a]z E tsI] [,w,] /] k k5 k5 [.[a]z E tsI] [,w,] /           // tail call here as well
+      [. [.[a]z E tsI] [,w,] /] k k5 .[a]z E tsI
+      [. [.[a]z E tsI] [,w,] /] k k5 k5[a]z E tsI
+      [. [.[a]z E tsI] [,w,] /] k5 k5 E tsI
+      [. [.[a]z E tsI] [,w,] /] k5 k4 tsI
+      [. [.[a]z E tsI] [,w,] /] k5 k4 [. [.[a]z E tsI] [,w,] /] I
+      [. [.[a]z E tsI] [,w,] /] k5 k4 . [.[a]z E tsI] [,w,] /
+      [. [.[a]z E tsI] [,w,] /] k5 k4 k4 [.[a]z E tsI] [,w,] /
+      [. [.[a]z E tsI] [,w,] /] k5 k4 .[a]z E tsI
+      [. [.[a]z E tsI] [,w,] /] k5 k4 k4[a]z E tsI
+      [. [.[a]z E tsI] [,w,] /] k9 k4 E tsI
+      [. [.[a]z E tsI] [,w,] /] k9 k3 tsI
       ...
-      [. [.[a]z E tsj] [,w,] /] k15 k k2sj
-      [. [.[a]z E tsj] [,w,] /] k15 k [. [.[a]z E tsj] [,w,] /] j
-      [. [.[a]z E tsj] [,w,] /] k15 k . [.[a]z E tsj] [,w,] /
-      [. [.[a]z E tsj] [,w,] /] k15 k k [.[a]z E tsj] [,w,] /           // tail call on final iteration
-      [. [.[a]z E tsj] [,w,] /] k15 k ,w,
-      [. [.[a]z E tsj] [,w,] /] k15 w,
-      k15 [. [.[a]z E tsj] [,w,] /] ,
+      [. [.[a]z E tsI] [,w,] /] k15 k k2sI
+      [. [.[a]z E tsI] [,w,] /] k15 k [. [.[a]z E tsI] [,w,] /] I
+      [. [.[a]z E tsI] [,w,] /] k15 k . [.[a]z E tsI] [,w,] /
+      [. [.[a]z E tsI] [,w,] /] k15 k k [.[a]z E tsI] [,w,] /           // tail call on final iteration
+      [. [.[a]z E tsI] [,w,] /] k15 k ,w,
+      [. [.[a]z E tsI] [,w,] /] k15 w,
+      k15 [. [.[a]z E tsI] [,w,] /] ,
       k15                                                               // implicit return to parent caller
 
     In practice many of the low-level stack operations would be optimized away by the backend, especially given a register-rich architecture.
 
-    Note that the looping block ends in a tail-call. This is a common idiom; if you hit a ] without using / or j, then you're returning from something. Otherwise no return is performed, and
+    Note that the looping block ends in a tail-call. This is a common idiom; if you hit a ] without using / or I, then you're returning from something. Otherwise no return is performed, and
     you're working in CPS. The terminal branch in this program, then, is [,w,], which is the only function that ends without tail-calling.
 
     Primality test.
     Takes a number and pushes a 0 or 1 onto the stack to indicate prime or composite, respectively. The stack layout is generally (loop continuation) (number to test) (current factor).
 
-    | (n) t [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]Z tsj
+    | (n) t [[..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /]]Z tsI
 
     Here is a sample run for (k7) (using expanded numbers for readability):
 
-    | k7 k2 [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]Z tsj
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 tsj
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] j
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 ..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k2 k2 ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k4 tswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k4 k7 wl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k7 k4 l! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 K! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 Ks Ks d[,]z [e tsj] [T+K] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k7 Ks d[,]z [e tsj] [T+K] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k7 t d[,]z [e tsj] [T+K] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 T K [,]z [e tsj] [T+K] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 K [e tsj] [T+K] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 e tsj
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 tsj
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] j
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 ..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k3 k3 ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k9 tswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k9 k7 wl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k7 k9 l! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 K [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
-      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 T+k
+    | k7 k2 [[..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /]]Z tsI
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 tsI
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] I
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 ..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k2 k2 ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k4 tswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k4 k7 wl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k7 k4 l! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 K! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 Ks Ks d[,]z [e tsI] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k7 Ks d[,]z [e tsI] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 k7 t d[,]z [e tsI] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 T K [,]z [e tsI] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 K [e tsI] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k2 e tsI
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 tsI
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] I
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 ..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 k3 k3 ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 k9 tswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 k9 k7 wl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 k7 k9 l! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 k! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 K [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsI] [T+K] /] /] k7 k3 T+k
       k
 
 Global functions.
@@ -210,3 +213,4 @@ The runtime is required to provide some global functions at specified offsets. I
 | -1    print integer (debugging)
   -2    print float (debugging)
   -3    stdcall C function
+  -4    write byte to stdout

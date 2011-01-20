@@ -15,21 +15,24 @@ static e *c = code + CODE_S;
 static e tmp;
 
 int main() {
-static void* globals[] = {&&std_call, &&pr_float, &&pr_int};
-static void** gs = globals + 3;
+
+static void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
+static void** gs = globals + 4;
 *--c = &&exit;
 goto main;
 exit: return *d;
 pr_int: printf("%""d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
-// Begin g1: [[. [.[a]z E tsj] [,w, Kn:*ik] /]]
+write_c: putc((char) *d++, stdout); goto **c++;
+
+// Begin g1: [[. [.[a]z E tsI] [,w, Kn:*ik] /]]
 g1:
 /* [ */ *--d = &&g2;
 /* ] */ goto **c++;
 // End g1
 
-// Begin g2: [. [.[a]z E tsj] [,w, Kn:*ik] /]
+// Begin g2: [. [.[a]z E tsI] [,w, Kn:*ik] /]
 g2:
 /* . */ *--d = d[1];
 /*   */ ;
@@ -41,7 +44,7 @@ g2:
 /* ] */ goto **c++;
 // End g2
 
-// Begin g3: [.[a]z E tsj]
+// Begin g3: [.[a]z E tsI]
 g3:
 /* . */ *--d = d[1];
 /* [ */ *--d = &&g4;
@@ -51,7 +54,7 @@ g3:
 /*   */ ;
 /* t */ *--d = 2;
 /* s */ *d = d[*d + 1];
-/* j */ goto **d++;
+/* I */ goto **d++;
 /* ] */ goto **c++;
 // End g3
 
@@ -76,7 +79,7 @@ g6:
 /* ] */ goto **c++;
 // End g6
 
-// Begin main: k10 kw [[. [.[a]z E tsj] [,w, Kn:*ik] /]]Z tsj
+// Begin main: k10 kw [[. [.[a]z E tsI] [,w, Kn:*ik] /]]Z tsI
 main:
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;
@@ -90,7 +93,7 @@ main:
 /*   */ ;
 /* t */ *--d = 2;
 /* s */ *d = d[*d + 1];
-/* j */ goto **d++;
+/* I */ goto **d++;
 /* ] */ goto **c++;
 // End main
 

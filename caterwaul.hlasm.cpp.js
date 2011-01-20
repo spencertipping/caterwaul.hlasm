@@ -21,12 +21,13 @@
                                                             '#{_[0]}:' + (os.trace ?
                                                               'fprintf(stderr, "\\n%""s %""d %""s", "#{_[0]}", &&#{_[0]} - (long long)&main, "#{_[1].source.replace(/\n/g, "")}");' : ''),
                                                             _[1].generated.join(';\n') + ';', '// End #{_[0]}\n']]].join('\n')] in
-                                       prelude + '\n\nint main() {\n#{main_setup(globals)}\n#{compiled}\n}',
+                                       prelude + '\n\nint main() {\n\n#{main_setup(globals, os)}\n\n#{compiled}\n}',
 
            gs                        = l[c = 0] in fn_['g#{++c}'],
-           main_setup(globals)       = ['static void* globals[] = {&&std_call, &&pr_float, &&pr_int};', 'static void** gs = globals + 3;',
+           main_setup(globals, opts) = ['static void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int#{opts.layout ? seq[~opts.layout.split(/\s+/) *[", &&" + _]].join("") : ""}};',
+                                        'static void** gs = globals + 4;',
                                         '*--c = &&exit;', 'goto main;', 'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
-                                        'std_call: (*(void(*)())d++)(); goto **c++;'].join('\n'),
+                                        'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
 
            prerequisites(globals)    = ['#include<stdio.h>', '#define DATA_S 1048576', '#define CODE_S 32768', '#define start(x) fprintf(stderr, "\\n%""8s", x)',
                                         '#define trace fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
@@ -39,7 +40,7 @@
              seq[sp[{n:'-', '!':'!', '~':'~'}] *![ts[_[0]]() = '*d = #{_[1]}*d']], ts.e() = '++*d', ts.E() = '--*d', ts.n() = '*d = -*d', ts.N() = '*(*f)d = -*(*f)d',
              ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts[':']() = '*d = gs + *d', ts['*']() = '*d = *(e*)(*d)', ts['=']() = '*d[1] = *d; ++d',
 
-             ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.j() = 'goto **d++', ts[']']() = 'goto **c++', ts.m() = '*d = malloc(*d)', ts.M() = 'free(*d++)',
+             ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.I() = 'goto **d++', ts[']']() = 'goto **c++', ts.m() = '*d = malloc(*d)', ts.M() = 'free(*d++)',
 
              ts.l() = 'tmp = *d < *++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1', ts.t() = '*--d = 2', ts.T() = '*--d = 3',
              ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d + 1] = *d', ts.v() = '*(*f)d = *d', ts.V() = '*d = *(*f)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',
