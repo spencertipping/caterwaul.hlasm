@@ -14,10 +14,11 @@
 
   caterwaul.tconfiguration('std seq continuation', 'hlasm.cpp', function () {
     this.namespace('hlasm').cpp = translate,
-    where*[translate(globals, opts)  = l*[derived  = seq[sp[globals] *[compile(_[0], _[1], opts || {})] /[caterwaul.util.merge(_, _0)]], prelude = prerequisites(derived) + ';\n\n',
+    where*[translate(globals, opts)  = l*[os       = opts || {},
+                                          derived  = seq[sp[globals] *[compile(_[0], _[1], os)] /[caterwaul.util.merge(_, _0)]], prelude = prerequisites(derived) + ';\n\n',
                                           compiled = seq[~sk[derived].sort() *[[_, derived[_]]]
                                                          -[['// Begin #{_[0]}: #{_[1].source.replace(/\n/g, "")}',
-                                                            '#{_[0]}:' + (opts.trace ?
+                                                            '#{_[0]}:' + (os.trace ?
                                                               'fprintf(stderr, "\\n%""s %""d %""s", "#{_[0]}", &&#{_[0]} - (long long)&main, "#{_[1].source.replace(/\n/g, "")}");' : ''),
                                                             _[1].generated.join(';\n') + ';', '// End #{_[0]}\n']]].join('\n')] in
                                        prelude + 'int main() {\n*--c = &&exit;\ngoto main;\nexit:\nreturn *d;\n\n#{compiled}\n}',
