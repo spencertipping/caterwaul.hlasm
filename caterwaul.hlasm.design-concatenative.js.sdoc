@@ -28,26 +28,31 @@ exactly one character. The following sections outline the available operations.
   Index.
   The sections after this cover operators by topic. This index does the opposite; it lists operators by their character.
 
-  | &|^~!<>{}   integer bitwise operations (< and > perform arithmetic shifts, { and } perform unsigned shifts)
+  | &|^~!<>{}() integer bitwise operations (< and > perform arithmetic shifts, { and } perform unsigned shifts)
     []          code quotation (with implicit return)
-    '           literal quotation of a big-endian quantity in 16 hex digits
     .,          duplicate, drop top stack entry
     +-          increment, decrement data stack pointer by N items
     *=          get, set memory whose address is stack top
-    ?           N [f1] [f2] -- evaluates to f1 or f2 depending on whether N is zero or nonzero, respectively
+    ?           N [f1] [f2] -- calls f1 or f2 depending on whether N is zero or nonzero, respectively
+    /           same as ?, but tail-call instead of standard call
     @#          get, set data stack address
-    $%          get, set call stack address (dangerous, but all call addresses are 64-bit and aligned)
-    :;_         global function call, tail call, reference
+    $%          get, set call stack address (dangerous; the call stack has no specified alignment or item size)
+    _           global section address
+    :           address of global at specified index (equivalent to k3<_a)
 
-  | 0123456789  push numbers 0-9 onto the stack
+  | 0123456789  multiply stack top by 10, then add digit value (used with k; becomes k100 for the number 100, for instance)
     ABCD        floating point addition, subtraction, multiplication, and division
     abcd        integer addition, subtraction, multiplication, and divmod
+    eE          increment, decrement
+    fF          if, if tail-call
     i           function call (pushes 64-bit return address onto the code stack)
     jJ          tail call (doesn't manipulate the code stack in any way), push address of current function onto the data stack (so Jj is a looping instruction)
+    kK          push 0, 1 onto the stack
     lL          integer less-than (signed), floating less-than
     mM          aligned allocate (size in bytes -> pointer), free (pointer)
     nN          integer two's complement, floating-point negation
     sS          retrieve, set Nth stack entry
+    tT          push 2, 3 onto the stack
     vV          integer -> double, double -> integer
     w           swap top two stack entries
     zZ          stash top entry, execute function, push stashed entry (Z does two)
@@ -78,20 +83,12 @@ exactly one character. The following sections outline the available operations.
     As a sanity check, any tail call operators should immediately precede a ].
 
     Literals.
-    The digits 0 through 9 push those literal numbers onto the stack. This can be a bit deceptive; the program 90 pushes 9 then 0, not the number 90. Literal pieces of data are big-endian
-    hex-encoded (letters are lower-case) and are quoted using '. For example, '0123456789abcdef pushes the integer 0x0123456789abcdef onto the stack. Fewer digits may be used, but a delimiting
-    space or other no-op character is required to indicate the end of quoted data.
-
-    Globals.
-    The assembler allows the programmer to reference globals with :, ;, and _. So, for example, if 'twice' is set to [.ii], then _twice i is the equivalent of typing .ii. (Note that the space
-    is required as a delimiter.) Each global is a statically-allocated slot in the ELF file; it isn't possible to define new globals at runtime, and the name of each global is erased during
-    compilation. The exact semantics for _foo are to push the absolute address of the 'foo' global slot onto the data stack.
-
-    Because it is so common to call a global function, the shorthand :foo is equivalent to _foo i. The shorthand ;foo is equivalent to _foo j. (The mnemonic is that ; is visually similar to j,
-    while : is visually similar to i.)
+    The digits are used to build integers in decimal. This results in the bytecode reading naturally; for example, k14 results in the number 14 being on the stack top. The exact semantic of
+    each digit is that it multiplies the stack top by 10 and then adds the digit's numeric value. This would almost never be used outside of embedding constants, and generally the backend will
+    fold the constant into an immediate.
 
     Stack manipulation.
-    w swaps the two top stack entries and . duplicates. The , operator drops the stack top. If a number N is on the top of the stack, then s fetches the Nth stack entry (not including N, so 0s
+    w swaps the two top stack entries and . duplicates. The , operator drops the stack top. If a number N is on the top of the stack, then s fetches the Nth stack entry (not including N, so ks
     is equivalent to .). S takes two parameters N and X and sets the stack entry at N to X, then pops both N and X. Note that no bounds-checking is performed for s or S; either could segfault.
     Every stack entry is 64 bits and appropriately aligned. There is no padding. The instructions + and - add and subtract N items from the stack pointer, respectively. Items are not
     necessarily lost when you increment the stack pointer beyond them, though they aren't preserved if overwritten.
@@ -99,8 +96,8 @@ exactly one character. The following sections outline the available operations.
     Two convenient operators are z and Z, which stash the top one or two stack entries respectively, calls the function on top of the stack, and pushes the one or two stashed entries back onto
     the stack. Usage is like this:
 
-    | 1234[a]Z  ->  334
-      1234[a]z  ->  154
+    | k1 k2 k3 k4 [a]Z  ->  k3 k3 k4
+      k1 k2 k3 k4 [a]z  ->  k1 k5 k4
 
     Memory addressing.
     The * operator retrieves memory at the specified address, and = takes an address A and a value V and sets memory at A to V, popping both A and V. Both of these operators are assumed to
@@ -108,7 +105,9 @@ exactly one character. The following sections outline the available operations.
 
     Integer math.
     Integer math primitives are supported. All integer math is assumed to happen in 64 bits for the sake of simplicity. a, b, c, and d add, subtract, multiply, and divide two 64-bit ints
-    respectively. Multiply and divide are always signed. In the case of division, the stack will receive both the quotient and modulus; the modulus will be the top stack item.
+    respectively. Multiply and divide are always signed. In the case of division, the stack will receive both the quotient and modulus; the modulus will be the top stack item. The shorthand
+    operators e and E increment and decrement, respectively, a signed integer. The mnemonic is from group theory nomenclature; e is used to represent unit, or one, and I think it comes from
+    the German 'ein'.
 
     Bitwise logic is available as well by using &, |, ^, ~, and !, which are semantically identical to the same operators in C. Left and right shifts are supported using < and > (each expects
     N and S, and shifts N by S). n performs two's-complement negation. v converts an integer to a double.
@@ -125,6 +124,8 @@ exactly one character. The following sections outline the available operations.
     The ? function takes three entries, N, [f1], and [f2]. If N is nonzero, f1 is called; otherwise f2 is called. If [f1] and [f2] are directly quoted, ? is allowed to inline them (but is not
     required to). A variant / tail-calls either f1 or f2; this is useful only in tail position (i.e. with no following operators before the return).
 
+    The f and F functions are shorthands; N [fn] f evaluates to [fn]i if N is nonzero, and N [fn] F evaluates to [fn]j if N is nonzero.
+
     Memory allocation.
     You can allocate and free memory using m and M respectively. The signatures are identical to the C malloc() and free(); that is, malloc takes a size and returns a pointer, and free takes a
     pointer and returns nothing. All memory allocated by m is 8-byte aligned.
@@ -135,43 +136,73 @@ exactly one character. The following sections outline the available operations.
     Sum numbers.
     This function pops N and pushes the sum of the numbers from 1 to N inclusive. The stack layout is generally (loop continuation) (sum) (immediate).
 
-    | (n) 0w [[. [.[a]z 1b 2sj] [,w,] /]]Z 2sj
+    | (n) kw [[. [.[a]z E tsj] [,w,] /]]Z tsj
 
-    Here (n) is not part of the program, but illustrates the expected stack state. Simulating the execution of the program for a stack of (5):
+    Here (n) is not part of the program, but illustrates the expected stack state. Simulating the execution of the program for a stack of (k5):
 
-    | 5 0w [[. [.[a]z 1b 2sj] [,w,] /]]Z 2sj
-      0 5 [[. [.[a]z 1b 2sj] [,w,] /]]Z 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 0 5 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 0 5 [. [.[a]z 1b 2sj] [,w,] /] j       // note the tail call; no new stack entry
-      [. [.[a]z 1b 2sj] [,w,] /] 0 5 . [.[a]z 1b 2sj] [,w,] /
-      [. [.[a]z 1b 2sj] [,w,] /] 0 5 5 [.[a]z 1b 2sj] [,w,] /           // tail call here as well
-      [. [.[a]z 1b 2sj] [,w,] /] 0 5 .[a]z 1b 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 0 5 5[a]z 1b 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 5 5 1b 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 5 4 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 5 4 [. [.[a]z 1b 2sj] [,w,] /] j
-      [. [.[a]z 1b 2sj] [,w,] /] 5 4 . [.[a]z 1b 2sj] [,w,] /
-      [. [.[a]z 1b 2sj] [,w,] /] 5 4 4 [.[a]z 1b 2sj] [,w,] /
-      [. [.[a]z 1b 2sj] [,w,] /] 5 4 .[a]z 1b 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 5 4 4[a]z 1b 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 9 4 1b 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 9 3 2sj
+    | k5 kw [[. [.[a]z E tsj] [,w,] /]]Z tsj
+      k k5 [[. [.[a]z E tsj] [,w,] /]]Z tsj
+      [. [.[a]z E tsj] [,w,] /] k k5 tsj
+      [. [.[a]z E tsj] [,w,] /] k k5 [. [.[a]z E tsj] [,w,] /] j        // note the tail call; no new stack entry
+      [. [.[a]z E tsj] [,w,] /] k k5 . [.[a]z E tsj] [,w,] /
+      [. [.[a]z E tsj] [,w,] /] k k5 k5 [.[a]z E tsj] [,w,] /           // tail call here as well
+      [. [.[a]z E tsj] [,w,] /] k k5 .[a]z E tsj
+      [. [.[a]z E tsj] [,w,] /] k k5 k5[a]z E tsj
+      [. [.[a]z E tsj] [,w,] /] k5 k5 E tsj
+      [. [.[a]z E tsj] [,w,] /] k5 k4 tsj
+      [. [.[a]z E tsj] [,w,] /] k5 k4 [. [.[a]z E tsj] [,w,] /] j
+      [. [.[a]z E tsj] [,w,] /] k5 k4 . [.[a]z E tsj] [,w,] /
+      [. [.[a]z E tsj] [,w,] /] k5 k4 k4 [.[a]z E tsj] [,w,] /
+      [. [.[a]z E tsj] [,w,] /] k5 k4 .[a]z E tsj
+      [. [.[a]z E tsj] [,w,] /] k5 k4 k4[a]z E tsj
+      [. [.[a]z E tsj] [,w,] /] k9 k4 E tsj
+      [. [.[a]z E tsj] [,w,] /] k9 k3 tsj
       ...
-      [. [.[a]z 1b 2sj] [,w,] /] 15 0 2sj
-      [. [.[a]z 1b 2sj] [,w,] /] 15 0 [. [.[a]z 1b 2sj] [,w,] /] j
-      [. [.[a]z 1b 2sj] [,w,] /] 15 0 . [.[a]z 1b 2sj] [,w,] /
-      [. [.[a]z 1b 2sj] [,w,] /] 15 0 0 [.[a]z 1b 2sj] [,w,] /          // tail call on final iteration
-      [. [.[a]z 1b 2sj] [,w,] /] 15 0 ,w,
-      [. [.[a]z 1b 2sj] [,w,] /] 15 w,
-      15 [. [.[a]z 1b 2sj] [,w,] /] ,
-      15                                                                // implicit return to parent caller
+      [. [.[a]z E tsj] [,w,] /] k15 k k2sj
+      [. [.[a]z E tsj] [,w,] /] k15 k [. [.[a]z E tsj] [,w,] /] j
+      [. [.[a]z E tsj] [,w,] /] k15 k . [.[a]z E tsj] [,w,] /
+      [. [.[a]z E tsj] [,w,] /] k15 k k [.[a]z E tsj] [,w,] /           // tail call on final iteration
+      [. [.[a]z E tsj] [,w,] /] k15 k ,w,
+      [. [.[a]z E tsj] [,w,] /] k15 w,
+      k15 [. [.[a]z E tsj] [,w,] /] ,
+      k15                                                               // implicit return to parent caller
 
-    In practice many of the low-level stack operations would be optimized away, especially on a register-rich architecture.
+    In practice many of the low-level stack operations would be optimized away by the backend, especially given a register-rich architecture.
 
     Note that the looping block ends in a tail-call. This is a common idiom; if you hit a ] without using / or j, then you're returning from something. Otherwise no return is performed, and
     you're working in CPS. The terminal branch in this program, then, is [,w,], which is the only function that ends without tail-calling.
 
     Primality test.
-    Takes a number and pushes a 0 or 1 onto the stack to indicate composite or prime, respectively. The stack layout is generally (loop continuation) (number to test) (current factor).
+    Takes a number and pushes a 0 or 1 onto the stack to indicate prime or composite, respectively. The stack layout is generally (loop continuation) (number to test) (current factor).
 
-    | (n) 2 [[..c2sl [,,,0] [1s1sd[,]z [1a2sj] [,,,1] /] /]]Z 2sj
+    | (n) t [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]Z tsj
+
+    Here is a sample run for n = 7 (using expanded numbers for readability):
+
+    | k7 k2 [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]Z tsj
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 tsj
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] j
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 ..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k2 k2 ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k4 tswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k4 k7 wl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k7 k4 l! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 K! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 Ks Ks d[,]z [e tsj] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k7 Ks d[,]z [e tsj] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 k7 t d[,]z [e tsj] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 T K [,]z [e tsj] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 K [e tsj] [T+K] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 e tsj
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 tsj
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] j
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 ..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k3 k3 ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k9 tswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k9 k7 wl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k7 k9 l! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 k! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 K [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /
+      [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k3 T+k
+      k
