@@ -297,10 +297,11 @@ __3c6177256de0fddb721f534c3ad8c0ee
 meta::data('main', 'server.js');
 meta::data('name', 'build');
 meta::data('quiet', '1');
-meta::data('sources', <<'__a1936a8de1d61b88d47e8df86fd89416');
+meta::data('random-number', '0.956664494079636');
+meta::data('sources', <<'__76d7402a8925303fb8b4eeab4be231d6');
 # The source files for your program -- all except the server process:
-src/module.js
-__a1936a8de1d61b88d47e8df86fd89416
+caterwaul.hlasm.cpp.js
+__76d7402a8925303fb8b4eeab4be231d6
 
 meta::data('watching', '1');
 meta::function('cat', 'join "\\n", retrieve(@_);');
