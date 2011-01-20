@@ -15,26 +15,29 @@
   caterwaul.tconfiguration('std seq continuation', 'hlasm.cpp', function () {
     this.namespace('hlasm').cpp = translate,
     where*[translate(globals, opts)  = l*[os       = opts || {},
-                                          derived  = seq[sp[globals] *[compile(_[0], _[1], os)] /[caterwaul.util.merge(_, _0)]], prelude = prerequisites(derived) + ';\n\n',
+                                          derived  = seq[sp[globals] *[compile(_[0], _[1], os)] /[caterwaul.util.merge(_, _0)]], prelude = prerequisites(derived),
                                           compiled = seq[~sk[derived].sort() *[[_, derived[_]]]
                                                          -[['// Begin #{_[0]}: #{_[1].source.replace(/\n/g, "")}',
                                                             '#{_[0]}:' + (os.trace ?
                                                               'fprintf(stderr, "\\n%""s %""d %""s", "#{_[0]}", &&#{_[0]} - (long long)&main, "#{_[1].source.replace(/\n/g, "")}");' : ''),
                                                             _[1].generated.join(';\n') + ';', '// End #{_[0]}\n']]].join('\n')] in
-                                       prelude + 'int main() {\n*--c = &&exit;\ngoto main;\nexit:\nreturn *d;\n\n#{compiled}\n}',
+                                       prelude + '\n\nint main() {\n#{main_setup(globals)}\n#{compiled}\n}',
 
            gs                        = l[c = 0] in fn_['g#{++c}'],
-           prerequisites(globals)    = ['#include<stdio.h>', '#define DATA_S 1048576', '#define CODE_S 32768',
-                                        'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
-                                        'static e *d = data + DATA_S;', 'static e *D = dtmp;', 'static e *c = code + CODE_S;', 'static e tmp;',
-                                        'static void pr_int(long long x) {printf("%lld\\n", x);}', 'static void pr_float(double x) {printf("%f\\n", x);}',
-                                        'static void *globals[] = {&pr_int, &pr_float};', 'static void* gs = globals + 2;'].join('\n'),
+           main_setup(globals)       = ['static void* globals[] = {&&std_call, &&pr_float, &&pr_int};', 'static void** gs = globals + 3;',
+                                        '*--c = &&exit;', 'goto main;', 'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
+                                        'std_call: (*(void(*)())d++)(); goto **c++;'].join('\n'),
+
+           prerequisites(globals)    = ['#include<stdio.h>', '#define DATA_S 1048576', '#define CODE_S 32768', '#define start(x) fprintf(stderr, "\\n%""8s", x)',
+                                        '#define trace fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
+                                        '', 'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
+                                        'static e *d = data + DATA_S;', 'static e *D = dtmp;', 'static e *c = code + CODE_S;', 'static e tmp;'].join('\n'),
 
            bytecode_translations     = {} /se.ts[
              seq[~'0123456789' *![ts[_]() = '*d *= 10; *d += #{_}']], seq[sp[{a:'+', b:'-', c:'*', '&':'&', '|':'|', '^':'^'}] *![ts[_[0]]() = 'd[1] #{_[1]}= *d++']],
              ts.d() = gs() /re['e #{_} = d[0]; d[0] = d[1] % #{_}, d[1] /= #{_}'], seq[sp[{A:'+', B:'-', C:'*', D:'/'}] *![ts[_[0]]() = '((f*)d)[1] #{_[1]}= *(f*)d++']],
              seq[sp[{n:'-', '!':'!', '~':'~'}] *![ts[_[0]]() = '*d = #{_[1]}*d']], ts.e() = '++*d', ts.E() = '--*d', ts.n() = '*d = -*d', ts.N() = '*(*f)d = -*(*f)d',
-             ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts[':']() = '*d = gs + *d',
+             ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts[':']() = '*d = gs + *d', ts['*']() = '*d = *(e*)(*d)', ts['=']() = '*d[1] = *d; ++d',
 
              ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.j() = 'goto **d++', ts[']']() = 'goto **c++', ts.m() = '*d = malloc(*d)', ts.M() = 'free(*d++)',
 
@@ -47,10 +50,7 @@
              ts['%']() = 'c = *d++', ts['?']() = gs() /re['*--c = &&#{_}; goto **((d += 3) - 2 - !d[-1]); #{_}:'], ts['/']() = 'goto **((d += 3) - 2 - !d[-1])',
                                      ts['f']() = gs() /re['d += 2; if (d[-1]) {*--c = #{_}; goto *d[-2];} #{_}:'], ts['F']() = 'd += 2; if (d[-1]) goto *d[-2];'],
 
-           compile(n, code, opts) = l*[ns = seq[~[]], cs = seq[~[]], ss = seq[~[]], globals = {},
-                                       trace_for(opts, i, x) = opts.trace ? 'fprintf(stderr, "\\n%""4s", "#{x}"); #{i}; ' +
-                                                                            'fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", ' +
-                                                                              'data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)' : i,
+           compile(n, code, opts) = l*[ns = seq[~[]], cs = seq[~[]], ss = seq[~[]], globals = {}, trace_for(opts, i, x) = opts.trace ? 'start("#{x}"); #{i}; trace' : i,
                                        encode(x) = bytecode_translations[x] /re['/* #{x} */ #{trace_for(opts, _ ? _() : "", x)}'],
                                        enter(n) = globals /se[cs.length && cs[cs.length - 1].push('/* [ */ *--d = &&#{n}'), ns.push(n), cs.push([]), ss.push([])],
                                        leave()  = globals /se[_[ns.pop()] = {generated: cs.pop() /se[_.push(encode(']'))], source: ss.pop().join('')}],

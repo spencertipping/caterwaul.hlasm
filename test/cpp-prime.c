@@ -9,18 +9,17 @@ static e dtmp[DATA_S];
 static e *d = data + DATA_S;
 static e *D = dtmp;
 static e *c = code + CODE_S;
-static e tmp;
-static void pr_int(long long x) {printf("%lld\n", x);}
-static void pr_float(double x) {printf("%f\n", x);}
-static void *globals[] = {&pr_int, &pr_float};
-static void* gs = globals + 2;;
+static e tmp;;
 
 int main() {
+static void* globals[] = {&&std_call, &&pr_int, &&pr_float};
+static void** gs = globals + 3;
 *--c = &&exit;
 goto main;
-exit:
-return *d;
-
+exit: return *d;
+pr_int: printf("%""d\n", *d++); goto *c++;
+pr_float: printf("%""%f\n", *d++); goto *c++;
+std_call: (*(void(*)())d++)(); goto *c++;
 // Begin g1: [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]
 g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]");
 /* [ */ *--d = &&g2;
