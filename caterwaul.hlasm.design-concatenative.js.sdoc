@@ -25,10 +25,10 @@ Bytecode.
 This stack language is encoded using bytecode to minimize decoding overhead. However, unlike most bytecode, this is encoded entirely in printable 7-bit ASCII. Each supported operation uses
 exactly one character. The following sections outline the available operations.
 
-  Index.
+  Instruction index.
   The sections after this cover operators by topic. This index does the opposite; it lists operators by their character.
 
-  | &|^~!<>{}() integer bitwise operations (< and > perform arithmetic shifts, { and } perform unsigned shifts)
+  | &|^~!<>{}   integer bitwise operations (< and > perform arithmetic shifts, { and } perform unsigned shifts)
     []          code quotation (with implicit return)
     .,          duplicate, drop top stack entry
     +-          increment, decrement data stack pointer by N items
@@ -46,7 +46,7 @@ exactly one character. The following sections outline the available operations.
     eE          increment, decrement
     fF          if, if tail-call
     i           function call (pushes 64-bit return address onto the code stack)
-    jJ          tail call (doesn't manipulate the code stack in any way), push address of current function onto the data stack (so Jj is a looping instruction)
+    j           tail call (doesn't manipulate the code stack in any way)
     kK          push 0, 1 onto the stack
     lL          integer less-than (signed), floating less-than
     mM          aligned allocate (size in bytes -> pointer), free (pointer)
@@ -76,9 +76,6 @@ exactly one character. The following sections outline the available operations.
     Tail calls are possible by using the j operator rather than i. This combinator operates identically to i, but does not push a new return address onto the call stack. The stack balance
     isn't lost, however, since the function invoking j also doesn't pop its own frame. Rather, the new function inherits the caller's frame and return address and presumably handles the
     cleanup as the original caller would have.
-
-    Conveniently, J pushes the address of the current syntactic quotation. This lets you write self-contained recursive functions without doing anything squirrelly. For example, this is an
-    infinite loop: [Jj]i. (This would apply even if the [] were inlined by the assembler backend.)
 
     As a sanity check, any tail call operators should immediately precede a ].
 
@@ -177,7 +174,7 @@ exactly one character. The following sections outline the available operations.
 
     | (n) t [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]Z tsj
 
-    Here is a sample run for n = 7 (using expanded numbers for readability):
+    Here is a sample run for (k7) (using expanded numbers for readability):
 
     | k7 k2 [[..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /]]Z tsj
       [..ctswl! [T+k] [Ks Ks d[,]z [e tsj] [T+K] /] /] k7 k2 tsj
