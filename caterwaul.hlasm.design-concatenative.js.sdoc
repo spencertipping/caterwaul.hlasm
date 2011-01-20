@@ -1,0 +1,177 @@
+Caterwaul high-level concatenative assembler with static-compilation condition | Spencer Tipping
+Licensed under the terms of the MIT source code license
+
+Introduction.
+After a couple of designs that had significant flaws, I'm considering a third approach. The first design was functional in nature, but failed to provide an appropriate value-passing strategy
+despite pretending to support CPS. The second design was concatenative but embodied too many of the abstractions present in Joy (i.e. runtime interpretation via the i combinator), and as such
+would have required garbage collection and online compilation. This third approach hopefully addresses these problems.
+
+  Static-compilation condition.
+  Joy is fundamentally interactive, which is problematic from the perspective of an assembler because ideally the assembler wouldn't have to encode a version of itself nor perform garbage
+  collection. The goal of the assembler is to generate a single executable image that isn't modified. However, the semantic advantages of Joy's code quotation are immense. The ideal compromise
+  is to disable dynamic list allocation (and thus dynamic compilation/interpretation), and emit each quoted segment of code as a precompiled subroutine. This works out nicely for a couple of
+  reasons. First, all subroutines operate on the global data stack, meaning that there is no closure state (so precompilation makes sense). Second, because of the uniform calling convention
+  (no parameter passing and a consistent register for each stack pointer), new code can be dynamically added later.
+
+  Primitive combinators.
+  Imposing static compilation doesn't change the semantics of many of Joy's builtin combinators. Combinators such as linrec, binrec, etc. are all preserved; however, rather than dynamically
+  interpreting their quoted code blocks, they have the ability to inline those code blocks and produce a fused segment of code to perform the specified operation. (Alternatively, if the scope
+  of the code is indefinite, it is also possible to dynamically jump into it; however, the code will already be compiled.)
+
+  The static-compilation condition does impose an important restriction however. Lists don't exist anymore, which is significant. As such, cons, swons, uncons, unswons, etc. are not defined.
+  The only remaining combinator that has list-oriented semantics is i, which is interpreted as a function call.
+
+Bytecode.
+This stack language is encoded using bytecode to minimize decoding overhead. However, unlike most bytecode, this is encoded entirely in printable 7-bit ASCII. Each supported operation uses
+exactly one character. The following sections outline the available operations.
+
+  Index.
+  The sections after this cover operators by topic. This index does the opposite; it lists operators by their character.
+
+  | &|^~!<>{}   integer bitwise operations (< and > perform arithmetic shifts, { and } perform unsigned shifts)
+    []          code quotation (with implicit return)
+    '           literal quotation of a big-endian quantity in 16 hex digits
+    .,          duplicate, drop top stack entry
+    +-          increment, decrement data stack pointer by N items
+    *=          get, set memory whose address is stack top
+    ?           N [f1] [f2] -- evaluates to f1 or f2 depending on whether N is zero or nonzero, respectively
+    @#          get, set data stack address
+    $%          get, set call stack address (dangerous, but all call addresses are 64-bit and aligned)
+    :;_         global function call, tail call, reference
+
+  | 0123456789  push numbers 0-9 onto the stack
+    ABCD        floating point addition, subtraction, multiplication, and division
+    abcd        integer addition, subtraction, multiplication, and divmod
+    i           function call (pushes 64-bit return address onto the code stack)
+    jJ          tail call (doesn't manipulate the code stack in any way), push address of current function onto the data stack (so Jj is a looping instruction)
+    lL          integer less-than (signed), floating less-than
+    mM          aligned allocate (size in bytes -> pointer), free (pointer)
+    nN          integer two's complement, floating-point negation
+    sS          retrieve, set Nth stack entry
+    vV          integer -> double, double -> integer
+    w           swap top two stack entries
+    zZ          stash top entry, execute function, push stashed entry (Z does two)
+
+  Instruction categories.
+  There are a fair number of instructions, but there is some consistency with how they are named. Generally a lowercase letter and an uppercase letter have complementary functionality.
+  Symbolic instructions were chosen for mnemonic effect, often from C.
+
+    Unused/reserved characters.
+    Characters 0-32 inclusive are all no-ops, as are 127 and greater. They can all appear in bytecode, but will be ignored if they are in a command position.
+
+    Sometimes a no-op character is required, however. They are used to delimit variable-length things such as literal numbers and global identifiers.
+
+    Quotation and execution.
+    As in Joy, a call is executed via the 'i' instruction. Also as in Joy, quotation is achieved by the characters '[' and ']'. So, for instance, for all X, [X]i is equivalent to X. The actual
+    semantics of quotation are to first compile whatever is inside brackets, and then replace the bracketed expression with an instruction to push the address of the newly compiled function.
+    In cases where the address doesn't escape the function may be inlined. (This was true of the [X]i example above.) However, the assembler is never required to do this.
+
+    Note that [] is a perfectly valid function; it serves as the identity or a no-op.
+
+    Tail calls are possible by using the j operator rather than i. This combinator operates identically to i, but does not push a new return address onto the call stack. The stack balance
+    isn't lost, however, since the function invoking j also doesn't pop its own frame. Rather, the new function inherits the caller's frame and return address and presumably handles the
+    cleanup as the original caller would have.
+
+    Conveniently, J pushes the address of the current syntactic quotation. This lets you write self-contained recursive functions without doing anything squirrelly. For example, this is an
+    infinite loop: [Jj]i. (This would apply even if the [] were inlined by the assembler backend.)
+
+    As a sanity check, any tail call operators should immediately precede a ].
+
+    Literals.
+    The digits 0 through 9 push those literal numbers onto the stack. This can be a bit deceptive; the program 90 pushes 9 then 0, not the number 90. Literal pieces of data are big-endian
+    hex-encoded (letters are lower-case) and are quoted using '. For example, '0123456789abcdef pushes the integer 0x0123456789abcdef onto the stack. Fewer digits may be used, but a delimiting
+    space or other no-op character is required to indicate the end of quoted data.
+
+    Globals.
+    The assembler allows the programmer to reference globals with :, ;, and _. So, for example, if 'twice' is set to [.ii], then _twice i is the equivalent of typing .ii. (Note that the space
+    is required as a delimiter.) Each global is a statically-allocated slot in the ELF file; it isn't possible to define new globals at runtime, and the name of each global is erased during
+    compilation. The exact semantics for _foo are to push the absolute address of the 'foo' global slot onto the data stack.
+
+    Because it is so common to call a global function, the shorthand :foo is equivalent to _foo i. The shorthand ;foo is equivalent to _foo j. (The mnemonic is that ; is visually similar to j,
+    while : is visually similar to i.)
+
+    Stack manipulation.
+    w swaps the two top stack entries and . duplicates. The , operator drops the stack top. If a number N is on the top of the stack, then s fetches the Nth stack entry (not including N, so 0s
+    is equivalent to .). S takes two parameters N and X and sets the stack entry at N to X, then pops both N and X. Note that no bounds-checking is performed for s or S; either could segfault.
+    Every stack entry is 64 bits and appropriately aligned. There is no padding. The instructions + and - add and subtract N items from the stack pointer, respectively. Items are not
+    necessarily lost when you increment the stack pointer beyond them, though they aren't preserved if overwritten.
+
+    Two convenient operators are z and Z, which stash the top one or two stack entries respectively, calls the function on top of the stack, and pushes the one or two stashed entries back onto
+    the stack. Usage is like this:
+
+    | 1234[a]Z  ->  334
+      1234[a]z  ->  154
+
+    Memory addressing.
+    The * operator retrieves memory at the specified address, and = takes an address A and a value V and sets memory at A to V, popping both A and V. Both of these operators are assumed to
+    operate on 64-bit aligned memory and 64-bit values. If you operate on unaligned values it will probably degrade performance.
+
+    Integer math.
+    Integer math primitives are supported. All integer math is assumed to happen in 64 bits for the sake of simplicity. a, b, c, and d add, subtract, multiply, and divide two 64-bit ints
+    respectively. Multiply and divide are always signed. In the case of division, the stack will receive both the quotient and modulus; the modulus will be the top stack item.
+
+    Bitwise logic is available as well by using &, |, ^, ~, and !, which are semantically identical to the same operators in C. Left and right shifts are supported using < and > (each expects
+    N and S, and shifts N by S). n performs two's-complement negation. v converts an integer to a double.
+
+    Floating-point math.
+    A, B, C, and D are double-precision variants of a, b, c, and d respectively, with the exception that D produces no modulus. N performs floating-point negation. V converts a double to an
+    integer.
+
+    Relational operators.
+    The only relational operators available are l and L, which determine whether one quantity is less than another. (The first operates on integers and the second floats.) If the value on the
+    stack top is less than the one below it, then a nonzero integer value will be pushed; otherwise zero will be pushed. Equality can be checked by the idiom ^!.
+
+    Conditionals.
+    The ? function takes three entries, N, [f1], and [f2]. If N is nonzero, f1 is called; otherwise f2 is called. If [f1] and [f2] are directly quoted, ? is allowed to inline them (but is not
+    required to). A variant / tail-calls either f1 or f2; this is useful only in tail position (i.e. with no following operators before the return).
+
+    Memory allocation.
+    You can allocate and free memory using m and M respectively. The signatures are identical to the C malloc() and free(); that is, malloc takes a size and returns a pointer, and free takes a
+    pointer and returns nothing. All memory allocated by m is 8-byte aligned.
+
+  Examples.
+  This language wasn't intended to produce readable programs, but here are some examples:
+
+    Sum numbers.
+    This function pops N and pushes the sum of the numbers from 1 to N inclusive. The stack layout is generally (loop continuation) (sum) (immediate).
+
+    | (n) 0w [[. [.[a]z 1b 2sj] [,w,] /]]Z 2sj
+
+    Here (n) is not part of the program, but illustrates the expected stack state. Simulating the execution of the program for a stack of (5):
+
+    | 5 0w [[. [.[a]z 1b 2sj] [,w,] /]]Z 2sj
+      0 5 [[. [.[a]z 1b 2sj] [,w,] /]]Z 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 0 5 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 0 5 [. [.[a]z 1b 2sj] [,w,] /] j       // note the tail call; no new stack entry
+      [. [.[a]z 1b 2sj] [,w,] /] 0 5 . [.[a]z 1b 2sj] [,w,] /
+      [. [.[a]z 1b 2sj] [,w,] /] 0 5 5 [.[a]z 1b 2sj] [,w,] /           // tail call here as well
+      [. [.[a]z 1b 2sj] [,w,] /] 0 5 .[a]z 1b 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 0 5 5[a]z 1b 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 5 5 1b 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 5 4 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 5 4 [. [.[a]z 1b 2sj] [,w,] /] j
+      [. [.[a]z 1b 2sj] [,w,] /] 5 4 . [.[a]z 1b 2sj] [,w,] /
+      [. [.[a]z 1b 2sj] [,w,] /] 5 4 4 [.[a]z 1b 2sj] [,w,] /
+      [. [.[a]z 1b 2sj] [,w,] /] 5 4 .[a]z 1b 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 5 4 4[a]z 1b 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 9 4 1b 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 9 3 2sj
+      ...
+      [. [.[a]z 1b 2sj] [,w,] /] 15 0 2sj
+      [. [.[a]z 1b 2sj] [,w,] /] 15 0 [. [.[a]z 1b 2sj] [,w,] /] j
+      [. [.[a]z 1b 2sj] [,w,] /] 15 0 . [.[a]z 1b 2sj] [,w,] /
+      [. [.[a]z 1b 2sj] [,w,] /] 15 0 0 [.[a]z 1b 2sj] [,w,] /          // tail call on final iteration
+      [. [.[a]z 1b 2sj] [,w,] /] 15 0 ,w,
+      [. [.[a]z 1b 2sj] [,w,] /] 15 w,
+      15 [. [.[a]z 1b 2sj] [,w,] /] ,
+      15                                                                // implicit return to parent caller
+
+    In practice many of the low-level stack operations would be optimized away, especially on a register-rich architecture.
+
+    Note that the looping block ends in a tail-call. This is a common idiom; if you hit a ] without using / or j, then you're returning from something. Otherwise no return is performed, and
+    you're working in CPS. The terminal branch in this program, then, is [,w,], which is the only function that ends without tail-calling.
+
+    Primality test.
+    Takes a number and pushes a 0 or 1 onto the stack to indicate composite or prime, respectively. The stack layout is generally (loop continuation) (number to test) (current factor).
+
+    | (n) 2 [[..c2sl [,,,0] [1s1sd[,]z [1a2sj] [,,,1] /] /]]Z 2sj
