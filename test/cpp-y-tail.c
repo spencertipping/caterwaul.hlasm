@@ -2,7 +2,7 @@
 #define DATA_S 1048576
 #define CODE_S 32768
 #define start(x) fprintf(stderr, "\n%""8s", x)
-#define trace fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
+#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
 
 typedef long long e;
 typedef double f;

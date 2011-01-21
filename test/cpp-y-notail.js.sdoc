@@ -1,0 +1,7 @@
+Y-combinator test.
+A factorial function using a non-tail-recursive looping form. (The i should change to I in the recursive block to make it tail-recursive.)
+
+| (n) K [(f) [ts [KscwEw]z i] [[,]z] ?] Y
+
+caterwaul.clone('std seq continuation hlasm.cpp')(function () {
+  console.log(caterwaul.hlasm.cpp({main: 'k5 K [ts [[KscwEw]z i] [,[,]z] ?] Y'}, {trace: true}))})();

@@ -2,7 +2,7 @@
 #define DATA_S 1048576
 #define CODE_S 32768
 #define start(x) fprintf(stderr, "\n%""8s", x)
-#define trace fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
+#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
 
 typedef long long e;
 typedef double f;
@@ -73,8 +73,8 @@ g7:fprintf(stderr, "\n%""s %""d %""s", "g7", &&g7 - (long long)&main, "[,]");
 /* ] */ start("]"); goto **c++; trace;
 // End g7
 
-// Begin main: k5 K [ts [[KscwEw]z i] [,[,]z] ?] y
-main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k5 K [ts [[KscwEw]z i] [,[,]z] ?] y");
+// Begin main: k5 K [ts [[KscwEw]z i] [,[,]z] ?] Y
+main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k5 K [ts [[KscwEw]z i] [,[,]z] ?] Y");
 /* k */ start("k"); *--d = 0; trace;
 /* 5 */ start("5"); *d *= 10; *d += 5; trace;
 /*   */ start(" "); ; trace;
@@ -82,7 +82,7 @@ main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k5 
 /*   */ start(" "); ; trace;
 /* [ */ *--d = &&g1;
 /*   */ start(" "); ; trace;
-/* y */ start("y"); *D++ = *d++; g11: *--c = &&g10; *--d = &&g11; goto *D[-1]; g10: --D; trace;
+/* Y */ start("Y"); *D++ = *d++; *--c = &&g10; g11: *--d = &&g11; goto *D[-1]; g10: --D; trace;
 /* ] */ start("]"); goto **c++; trace;
 // End main
 

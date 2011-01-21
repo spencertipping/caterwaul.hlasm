@@ -38,7 +38,7 @@ exactly one character. The following sections outline the available operations.
     @#          get, set data stack address
     $%          get, set call stack address (dangerous; the call stack has no specified alignment or item size)
     _           global section address
-    :           address of global at specified index (equivalent to k3<_a)
+    :           address of global at specified index (equivalent to T<_a)
 
   | 0123456789  multiply stack top by 10, then add digit value (used with k; becomes k100 for the number 100, for instance)
     ABCD        floating point addition, subtraction, multiplication, and division
@@ -50,11 +50,12 @@ exactly one character. The following sections outline the available operations.
     lL          integer less-than (signed), floating less-than
     mM          aligned allocate (size in bytes -> pointer), free (pointer)
     nN          integer two's complement, floating-point negation
+    rR          short-circuit or/and -- x [y] r -> x if x == 0, y if x != 0
     sS          retrieve, set Nth stack entry
     tT          push 2, 3 onto the stack
     vV          integer -> double, double -> integer
     w           swap top two stack entries
-    yY          fixed point: [x] y -> [[x] y] [x]i, and [x] Y -> [[x] Y] [x]I
+    Y           fixed point: [x] y -> [[x] y] [x]I (always tail-recursive for the looping step)
     zZ          stash top entry, execute function, push stashed entry (Z does two)
 
   Instruction categories.
@@ -79,10 +80,9 @@ exactly one character. The following sections outline the available operations.
 
     As a sanity check, any tail call operators should immediately precede a ].
 
-    The y combinator works as it would in lambda-calculus. It invokes a function with a recursive step that repeats the process. Y is similar, but performs a tail call. It is up to the backend
-    to find an efficient way to compile this. Note that y and Y are not as free-form as they are in the lambda calculus. In particular, you can't tail-call into one from inside a z or Z block,
-    just like you wouldn't be able to tail-call into a function from this position (or rather, you can but shouldn't). Consequently, Y allocates a call frame despite using tail calls for the
-    looping; you should expect to use tail calls when looping but a standard return for the terminal case.
+    Y is similar to the fixed point from lambda calculus, but performs a tail call. It is up to the backend to find an efficient way to compile this. Note that Y is not as free-form as it
+    could be. In particular, z and Z are not tail calls, so you can't (shouldn't) try to escape into a loop from inside. The terminal case should return normally however; Y allocates exactly
+    one call frame to clean up temporary variables.
 
     Literals.
     The digits are used to build integers in decimal. This results in the bytecode reading naturally; for example, k14 results in the number 14 being on the stack top. The exact semantic of

@@ -30,7 +30,8 @@
                                         'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
 
            prerequisites(globals)    = ['#include<stdio.h>', '#define DATA_S 1048576', '#define CODE_S 32768', '#define start(x) fprintf(stderr, "\\n%""8s", x)',
-                                        '#define trace fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
+                                        '#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", ' +
+                                                              'D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
                                         '', 'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
                                         'static e *d = data + DATA_S;', 'static e *D = dtmp;', 'static e *c = code + CODE_S;', 'static e tmp;'].join('\n'),
 
@@ -40,12 +41,13 @@
              seq[sp[{n:'-', '!':'!', '~':'~'}] *![ts[_[0]]() = '*d = #{_[1]}*d']], ts.e() = '++*d', ts.E() = '--*d', ts.n() = '*d = -*d', ts.N() = '*(*f)d = -*(*f)d',
              ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts[':']() = '*d = gs + *d', ts['*']() = '*d = *(e*)(*d)', ts['=']() = '*d[1] = *d; ++d',
 
+             ts.r() = gs() /re['++d; if (*d) {++d; *--c = #{_}; goto *d[-2];} #{_}:'], ts.R() = gs() /re['++d; if (!*d) {++d; *--c = #{_}; goto *d[-2];} #{_}:'],
+
              ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.I() = 'goto **d++', ts[']']() = 'goto **c++', ts.m() = '*d = malloc(*d)', ts.M() = 'free(*d++)',
-             ts.y() = l[e = gs(), r = gs()] in '*D++ = *d++; #{r}: *--c = &&#{e}; *--d = &&#{r}; goto *D[-1]; #{e}: --D',
              ts.Y() = l[e = gs(), r = gs()] in '*D++ = *d++; *--c = &&#{e}; #{r}: *--d = &&#{r}; goto *D[-1]; #{e}: --D',
 
              ts.l() = 'tmp = *d < *++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1', ts.t() = '*--d = 2', ts.T() = '*--d = 3',
-             ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d + 1] = *d', ts.v() = '*(*f)d = *d', ts.V() = '*d = *(*f)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',
+             ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d + 1] = *d; ++d', ts.v() = '*(f*)d = (f)*d', ts.V() = '*d = (e)*(f*)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',
              ts.z() = gs() /re['tmp = *d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d = *--D'],
              ts.Z() = gs() /re['tmp = *d++; *D++=*d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d=*--D; *--d=*--D'],
 
