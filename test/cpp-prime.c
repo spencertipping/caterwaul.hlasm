@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<unistd.h>
 #define DATA_S 1048576
 #define CODE_S 32768
 #define start(x) fprintf(stderr, "\n%""8s", x)
@@ -16,14 +17,20 @@ static e tmp;
 
 int main() {
 
-void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
-void** gs = globals + 4;
+void* globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c, };
+void** gs = globals + 104;
 int i = 0;
+e *j = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
 pr_int: printf("%""d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
+pr_stacks: fprintf(stderr, "[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d%""20d%""10f\n", j - d, *j, *j);
+           fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d%""20d", j - c, *j - (e)(&main));
+           fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d%""20d%""20d%""10f\n", j - dtmp, *j, *j - (e)(&main), *j);
+           goto **c++;
+sleep_ms: usleep(*d++); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
@@ -55,7 +62,7 @@ g2:fprintf(stderr, "\n%""s %""d %""s", "g2", &&g2 - (long long)&main, "[..ctswl!
 // Begin g3: [T+k]
 g3:fprintf(stderr, "\n%""s %""d %""s", "g3", &&g3 - (long long)&main, "[T+k]");
 /* T */ start("T"); *--d = 3; trace;
-/* + */ start("+"); d += *d; trace;
+/* + */ start("+"); d += *d + 1; trace;
 /* k */ start("k"); *--d = 0; trace;
 /* ] */ start("]"); goto **c++; trace;
 // End g3
@@ -99,7 +106,7 @@ g8:fprintf(stderr, "\n%""s %""d %""s", "g8", &&g8 - (long long)&main, "[e tsI]")
 // Begin g9: [T+K]
 g9:fprintf(stderr, "\n%""s %""d %""s", "g9", &&g9 - (long long)&main, "[T+K]");
 /* T */ start("T"); *--d = 3; trace;
-/* + */ start("+"); d += *d; trace;
+/* + */ start("+"); d += *d + 1; trace;
 /* K */ start("K"); *--d = 1; trace;
 /* ] */ start("]"); goto **c++; trace;
 // End g9
@@ -114,7 +121,7 @@ main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k97
 /*   */ start(" "); ; trace;
 /* [ */ *--d = &&g1;
 /* t */ start("t"); *--d = 2; trace;
-/* Z */ start("Z"); d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g10; goto *tmp; g10: for (i = *--D; i > 0; --i) *--d = *--D;; trace;
+/* Z */ start("Z"); d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g10; goto *tmp; g10: for (i = *--D; i > 0; --i) *--d = *--D; trace;
 /*   */ start(" "); ; trace;
 /* t */ start("t"); *--d = 2; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;

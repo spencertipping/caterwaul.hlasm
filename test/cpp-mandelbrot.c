@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<unistd.h>
 #define DATA_S 1048576
 #define CODE_S 32768
 #define start(x) fprintf(stderr, "\n%""8s", x)
@@ -16,14 +17,21 @@ static e tmp;
 
 int main() {
 
-void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int, &&pixel};
-void** gs = globals + 4;
+void* globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c, &&pixel};
+void** gs = globals + 104;
 int i = 0;
+e *j = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
 pr_int: printf("%""d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
+pr_stacks:
+fprintf(stderr, "\n[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - d, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - dtmp, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20d|dv\n", j - c, *j - (e)(&main));
+goto **c++;
+sleep_ms: usleep(*d++ * 1000); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
@@ -63,12 +71,17 @@ g13:
 /* ] */ goto **c++;
 // End g13
 
-// Begin g16: [KsKvL [k] [[KsKvL [KnvtS k10k4n:*I] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]
+// Begin g16: [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]
 g16:
-/* K */ *--d = 1;
+/* t */ *--d = 2;
 /* s */ *d = d[*d + 1];
 /* K */ *--d = 1;
 /* v */ *(f*)d = (f)*d;
+/* T */ *--d = 3;
+/* v */ *(f*)d = (f)*d;
+/* D */ ((f*)d)[1] /= *(f*)d++;
+/* . */ *--d = d[1];
+/* A */ ((f*)d)[1] += *(f*)d++;
 /* L */ tmp = *(f*)d < *(f*)++d; *d = tmp;
 /*   */ ;
 /* [ */ *--d = &&g17;
@@ -85,21 +98,22 @@ g17:
 /* ] */ goto **c++;
 // End g17
 
-// Begin g18: [[KsKvL [KnvtS k10k4n:*I] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I]
+// Begin g18: [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I]
 g18:
 /* [ */ *--d = &&g19;
 /* y */ *D++ = *d++; *--c = &&g26; g27: *--d = &&g27; goto *D[-1]; g26: --D;
 /*   */ ;
 /* [ */ *--d = &&g28;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g29; goto *tmp; g29: *--d = *--D;
+/* t */ *--d = 2;
+/* Z */ d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g29; goto *tmp; g29: for (i = *--D; i > 0; --i) *--d = *--D;
 /*   */ ;
 /* I */ goto **d++;
 /* ] */ goto **c++;
 // End g18
 
-// Begin g19: [KsKvL [KnvtS k10k4n:*I] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]
+// Begin g19: [tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]
 g19:
-/* K */ *--d = 1;
+/* t */ *--d = 2;
 /* s */ *d = d[*d + 1];
 /* K */ *--d = 1;
 /* v */ *(f*)d = (f)*d;
@@ -119,19 +133,20 @@ g2:
 /* ] */ goto **c++;
 // End g2
 
-// Begin g20: [KnvtS k10k4n:*I]
+// Begin g20: [KnvTeS, k10Kn:*I]
 g20:
 /* K */ *--d = 1;
 /* n */ *d = -*d;
 /* v */ *(f*)d = (f)*d;
-/* t */ *--d = 2;
+/* T */ *--d = 3;
+/* e */ ++*d;
 /* S */ d[*d] = d[1]; d += 2;
+/* , */ ++d;
 /*   */ ;
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;
 /* 0 */ *d *= 10; *d += 0;
-/* k */ *--d = 0;
-/* 4 */ *d *= 10; *d += 4;
+/* K */ *--d = 1;
 /* n */ *d = -*d;
 /* : */ *d = gs + *d;
 /* * */ *d = *(e*)(*d);
@@ -139,7 +154,7 @@ g20:
 /* ] */ goto **c++;
 // End g20
 
-// Begin g21: [TsTs _*i k32a k4n:*i [Kvk10vDA]z I]
+// Begin g21: [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I]
 g21:
 /* T */ *--d = 3;
 /* s */ *d = d[*d + 1];
@@ -151,30 +166,35 @@ g21:
 /* i */ *--c = &&g22; goto **d++; g22:;
 /*   */ ;
 /* k */ *--d = 0;
+/* 6 */ *d *= 10; *d += 6;
+/* 3 */ *d *= 10; *d += 3;
+/* & */ d[1] &= *d++;
+/*   */ ;
+/* k */ *--d = 0;
 /* 3 */ *d *= 10; *d += 3;
 /* 2 */ *d *= 10; *d += 2;
 /* a */ d[1] += *d++;
 /*   */ ;
-/* k */ *--d = 0;
-/* 4 */ *d *= 10; *d += 4;
+/* K */ *--d = 1;
 /* n */ *d = -*d;
 /* : */ *d = gs + *d;
 /* * */ *d = *(e*)(*d);
 /* i */ *--c = &&g23; goto **d++; g23:;
 /*   */ ;
 /* [ */ *--d = &&g24;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g25; goto *tmp; g25: *--d = *--D;
+/* t */ *--d = 2;
+/* Z */ d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g25; goto *tmp; g25: for (i = *--D; i > 0; --i) *--d = *--D;
 /*   */ ;
 /* I */ goto **d++;
 /* ] */ goto **c++;
 // End g21
 
-// Begin g24: [Kvk10vDA]
+// Begin g24: [Kvk90vDA]
 g24:
 /* K */ *--d = 1;
 /* v */ *(f*)d = (f)*d;
 /* k */ *--d = 0;
-/* 1 */ *d *= 10; *d += 1;
+/* 9 */ *d *= 10; *d += 9;
 /* 0 */ *d *= 10; *d += 0;
 /* v */ *(f*)d = (f)*d;
 /* D */ ((f*)d)[1] /= *(f*)d++;
@@ -182,12 +202,12 @@ g24:
 /* ] */ goto **c++;
 // End g24
 
-// Begin g28: [Kvk10vDA]
+// Begin g28: [Kvk40vDA]
 g28:
 /* K */ *--d = 1;
 /* v */ *(f*)d = (f)*d;
 /* k */ *--d = 0;
-/* 1 */ *d *= 10; *d += 1;
+/* 4 */ *d *= 10; *d += 4;
 /* 0 */ *d *= 10; *d += 0;
 /* v */ *(f*)d = (f)*d;
 /* D */ ((f*)d)[1] /= *(f*)d++;
@@ -273,20 +293,22 @@ g9:
 /* ] */ goto **c++;
 // End g9
 
-// Begin main: Knv . [KsKvL [k] [[KsKvL [KnvtS k10k4n:*I] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]y
+// Begin main: tnv Knv [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]y
 main:
-/* K */ *--d = 1;
+/* t */ *--d = 2;
 /* n */ *d = -*d;
 /* v */ *(f*)d = (f)*d;
 /*   */ ;
-/* . */ *--d = d[1];
+/* K */ *--d = 1;
+/* n */ *d = -*d;
+/* v */ *(f*)d = (f)*d;
 /*   */ ;
 /* [ */ *--d = &&g16;
 /* y */ *D++ = *d++; *--c = &&g30; g31: *--d = &&g31; goto *D[-1]; g30: --D;
 /* ] */ goto **c++;
 // End main
 
-// Begin pixel: KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]y
+// Begin pixel: KsKs k1000 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]y
 pixel:
 /* K */ *--d = 1;
 /* s */ *d = d[*d + 1];
@@ -294,7 +316,9 @@ pixel:
 /* s */ *d = d[*d + 1];
 /*   */ ;
 /* k */ *--d = 0;
-/* 5 */ *d *= 10; *d += 5;
+/* 1 */ *d *= 10; *d += 1;
+/* 0 */ *d *= 10; *d += 0;
+/* 0 */ *d *= 10; *d += 0;
 /* 0 */ *d *= 10; *d += 0;
 /*   */ ;
 /* [ */ *--d = &&g1;

@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<unistd.h>
 #define DATA_S 1048576
 #define CODE_S 32768
 #define start(x) fprintf(stderr, "\n%""8s", x)
@@ -16,24 +17,30 @@ static e tmp;
 
 int main() {
 
-void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
-void** gs = globals + 4;
+void* globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c};
+void** gs = globals + 104;
 int i = 0;
+e *j = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
 pr_int: printf("%""d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
+pr_stacks: fprintf(stderr, "[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d%""20d%""10f\n", j - d, *j, *j);
+           fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d%""20d", j - c, *j - (e)(&main));
+           fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d%""20d%""20d%""10f\n", j - dtmp, *j, *j - (e)(&main), *j);
+           goto **c++;
+sleep_ms: usleep(*d++); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
-// Begin g1: [[. [.[a]z E tsI] [,w, Kn:*ik] /]]
+// Begin g1: [[. [.[a]z E tsI] [,w, k101n:*ik] /]]
 g1:
 /* [ */ *--d = &&g2;
 /* ] */ goto **c++;
 // End g1
 
-// Begin g2: [. [.[a]z E tsI] [,w, Kn:*ik] /]
+// Begin g2: [. [.[a]z E tsI] [,w, k101n:*ik] /]
 g2:
 /* . */ *--d = d[1];
 /*   */ ;
@@ -65,13 +72,16 @@ g4:
 /* ] */ goto **c++;
 // End g4
 
-// Begin g6: [,w, Kn:*ik]
+// Begin g6: [,w, k101n:*ik]
 g6:
 /* , */ ++d;
 /* w */ tmp = *d; *d = d[1]; d[1] = tmp;
 /* , */ ++d;
 /*   */ ;
-/* K */ *--d = 1;
+/* k */ *--d = 0;
+/* 1 */ *d *= 10; *d += 1;
+/* 0 */ *d *= 10; *d += 0;
+/* 1 */ *d *= 10; *d += 1;
 /* n */ *d = -*d;
 /* : */ *d = gs + *d;
 /* * */ *d = *(e*)(*d);
@@ -80,7 +90,7 @@ g6:
 /* ] */ goto **c++;
 // End g6
 
-// Begin main: k10 kw [[. [.[a]z E tsI] [,w, Kn:*ik] /]]tZ tsI
+// Begin main: k10 kw [[. [.[a]z E tsI] [,w, k101n:*ik] /]]tZ tsI
 main:
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;
@@ -91,7 +101,7 @@ main:
 /*   */ ;
 /* [ */ *--d = &&g1;
 /* t */ *--d = 2;
-/* Z */ d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g8; goto *tmp; g8: for (i = *--D; i > 0; --i) *--d = *--D;;
+/* Z */ d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g8; goto *tmp; g8: for (i = *--D; i > 0; --i) *--d = *--D;
 /*   */ ;
 /* t */ *--d = 2;
 /* s */ *d = d[*d + 1];

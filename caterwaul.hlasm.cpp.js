@@ -24,12 +24,18 @@
                                        prelude + '\n\nint main() {\n\n#{main_setup(globals, os)}\n\n#{compiled}\n}',
 
            gs                        = l[c = 0] in fn_['g#{++c}'],
-           main_setup(globals, opts) = ['void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int#{opts.layout ? seq[~opts.layout.split(/\s+/) *[", &&" + _]].join("") : ""}};',
-                                        'void** gs = globals + 4;', 'int i = 0;',
-                                        '*--c = &&exit;', 'goto main;', 'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
-                                        'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
+           main_setup(globals, opts) = ['void* globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, #{seq[(0 >>>[_ + 1] <<[_ < 99]) *["NULL"]].join(", ")}, &&write_c' +
+                                        (opts.layout ? seq[~opts.layout.split(/\s+/) *[', &&' + _]].join('') : '') + '};',
+                                        'void** gs = globals + 104;', 'int i = 0;', 'e *j = 0;', '*--c = &&exit;', 'goto main;',
+                                        'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
+                                        'pr_stacks:',
+                                        'fprintf(stderr, "\\n[data]\\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\\n", j - d, *j, *j - (e)(&main), *j);',
+                                        'fprintf(stderr, "[daux]\\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\\n", j - dtmp, *j, *j - (e)(&main), *j);',
+                                        'fprintf(stderr, "[code]\\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20d|dv\\n", j - c, *j - (e)(&main));',
+                                        'goto **c++;',
+                                        'sleep_ms: usleep(*d++ * 1000); goto **c++;', 'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
 
-           prerequisites(globals)    = ['#include<stdio.h>', '#define DATA_S 1048576', '#define CODE_S 32768', '#define start(x) fprintf(stderr, "\\n%""8s", x)',
+           prerequisites(globals)    = ['#include<stdio.h>', '#include<unistd.h>', '#define DATA_S 1048576', '#define CODE_S 32768', '#define start(x) fprintf(stderr, "\\n%""8s", x)',
                                         '#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", ' +
                                                               'D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
                                         '', 'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
