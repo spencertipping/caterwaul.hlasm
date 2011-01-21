@@ -49,12 +49,11 @@
              ts.l() = 'tmp = *d < *++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1', ts.t() = '*--d = 2', ts.T() = '*--d = 3',
              ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d + 1] = *d; ++d', ts.v() = '*(f*)d = (f)*d', ts.V() = '*d = (e)*(f*)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',
              ts.z() = gs() /re['tmp = *d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d = *--D'],
-             ts.Z() = gs() /re['d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&#{_}; goto *tmp; ' +
-                               '#{_}: for (i = *--D; i > 0; --i) *--d = *--D;'],
+             ts.Z() = gs() /re['d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&#{_}; goto *tmp; #{_}: for (i = *--D; i > 0; --i) *--d = *--D'],
 
-             ts['.']() = '*--d = d[1]', ts[',']() = '++d', ts['+']() = 'd += *d', ts['-']() = 'd -= *d', ts['@']() = '*--d = d', ts['#']() = 'd = *d', ts['$']() = '*--d = c',
+             ts['.']() = '*--d = d[1]', ts[',']() = '++d', ts['+']() = 'd += *d + 1', ts['-']() = 'd -= *d - 1', ts['@']() = '*--d = d', ts['#']() = 'd = *d', ts['$']() = '*--d = c',
              ts['%']() = 'c = *d++', ts['?']() = gs() /re['*--c = &&#{_}; goto **((d += 3) - 2 - !d[-1]); #{_}:'], ts['/']() = 'goto **((d += 3) - 2 - !d[-1])',
-                                     ts['f']() = gs() /re['d += 2; if (d[-1]) {*--c = #{_}; goto *d[-2];} #{_}:'], ts['F']() = 'd += 2; if (d[-1]) goto *d[-2];'],
+                                     ts['f']() = gs() /re['d += 2; if (d[-1]) {*--c = #{_}; goto *d[-2];} #{_}:'], ts['F']() = 'd += 2; if (d[-1]) goto *d[-2]'],
 
            compile(n, code, opts) = l*[ns = seq[~[]], cs = seq[~[]], ss = seq[~[]], globals = {}, trace_for(opts, i, x) = opts.trace ? 'start("#{x}"); #{i}; trace' : i,
                                        encode(x) = bytecode_translations[x] /re['/* #{x} */ #{trace_for(opts, _ ? _() : "", x)}'],
