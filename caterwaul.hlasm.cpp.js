@@ -24,8 +24,8 @@
                                        prelude + '\n\nint main() {\n\n#{main_setup(globals, os)}\n\n#{compiled}\n}',
 
            gs                        = l[c = 0] in fn_['g#{++c}'],
-           main_setup(globals, opts) = ['static void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int#{opts.layout ? seq[~opts.layout.split(/\s+/) *[", &&" + _]].join("") : ""}};',
-                                        'static void** gs = globals + 4;',
+           main_setup(globals, opts) = ['void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int#{opts.layout ? seq[~opts.layout.split(/\s+/) *[", &&" + _]].join("") : ""}};',
+                                        'void** gs = globals + 4;', 'int i = 0;',
                                         '*--c = &&exit;', 'goto main;', 'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
                                         'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
 
@@ -49,7 +49,8 @@
              ts.l() = 'tmp = *d < *++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1', ts.t() = '*--d = 2', ts.T() = '*--d = 3',
              ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d + 1] = *d; ++d', ts.v() = '*(f*)d = (f)*d', ts.V() = '*d = (e)*(f*)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',
              ts.z() = gs() /re['tmp = *d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d = *--D'],
-             ts.Z() = gs() /re['tmp = *d++; *D++=*d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d=*--D; *--d=*--D'],
+             ts.Z() = gs() /re['d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&#{_}; goto *tmp; ' +
+                               '#{_}: for (i = *--D; i > 0; --i) *--d = *--D;'],
 
              ts['.']() = '*--d = d[1]', ts[',']() = '++d', ts['+']() = 'd += *d', ts['-']() = 'd -= *d', ts['@']() = '*--d = d', ts['#']() = 'd = *d', ts['$']() = '*--d = c',
              ts['%']() = 'c = *d++', ts['?']() = gs() /re['*--c = &&#{_}; goto **((d += 3) - 2 - !d[-1]); #{_}:'], ts['/']() = 'goto **((d += 3) - 2 - !d[-1])',

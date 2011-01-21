@@ -2,7 +2,7 @@
 #define DATA_S 1048576
 #define CODE_S 32768
 #define start(x) fprintf(stderr, "\n%""8s", x)
-#define trace fprintf(stderr, "%""10d|s%""10d|c%""20lld|v%""20lld|dv%""20lf|V", data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
+#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
 
 typedef long long e;
 typedef double f;
@@ -16,8 +16,9 @@ static e tmp;
 
 int main() {
 
-static void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
-static void** gs = globals + 4;
+void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
+void** gs = globals + 4;
+int i = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
@@ -79,7 +80,7 @@ g6:
 /* ] */ goto **c++;
 // End g6
 
-// Begin main: k10 kw [[. [.[a]z E tsI] [,w, Kn:*ik] /]]Z tsI
+// Begin main: k10 kw [[. [.[a]z E tsI] [,w, Kn:*ik] /]]tZ tsI
 main:
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;
@@ -89,7 +90,8 @@ main:
 /* w */ tmp = *d; *d = d[1]; d[1] = tmp;
 /*   */ ;
 /* [ */ *--d = &&g1;
-/* Z */ tmp = *d++; *D++=*d++; *D++=*d++; *--c = &&g8; goto *tmp; g8: *--d=*--D; *--d=*--D;
+/* t */ *--d = 2;
+/* Z */ d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g8; goto *tmp; g8: for (i = *--D; i > 0; --i) *--d = *--D;;
 /*   */ ;
 /* t */ *--d = 2;
 /* s */ *d = d[*d + 1];

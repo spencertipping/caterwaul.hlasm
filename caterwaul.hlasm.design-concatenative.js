@@ -55,8 +55,8 @@
 //     tT          push 2, 3 onto the stack
 //     vV          integer -> double, double -> integer
 //     w           swap top two stack entries
-//     Y           fixed point: [x] y -> [[x] y] [x]I (always tail-recursive for the looping step)
-//     zZ          stash top entry, execute function, push stashed entry (Z does two)
+//     y           fixed point: [x] y -> [[x] y] [x]I (always tail-recursive for the looping step)
+//     zZ          stash top entry, execute function, push stashed entry (Z stashes N, where N is the number on top of the stack)
 
 //   Instruction categories.
 //   There are a fair number of instructions, but there is some consistency with how they are named. Generally a lowercase letter and an uppercase letter have complementary functionality.
@@ -80,9 +80,9 @@
 
 //     As a sanity check, any tail call operators should immediately precede a ].
 
-//     Y is similar to the fixed point from lambda calculus, but performs a tail call. It is up to the backend to find an efficient way to compile this. Note that Y is not as free-form as it
-//     could be. In particular, z and Z are not tail calls, so you can't (shouldn't) try to escape into a loop from inside. The terminal case should return normally however; Y allocates exactly
-//     one call frame to clean up temporary variables.
+//     The y function is similar to the fixed point from lambda calculus, but performs a tail call. It is up to the backend to find an efficient way to compile this. Note that y is not as
+//     free-form as it could be. In particular, z and Z are not tail calls, so you can't (shouldn't) try to escape into a loop from inside (come to think of it, I can't see a situation where this
+//     would pose a problem; so most likely it doesn't matter). The terminal case should return normally however; y allocates exactly one call frame to clean up temporary variables.
 
 //     Literals.
 //     The digits are used to build integers in decimal. This results in the bytecode reading naturally; for example, k14 results in the number 14 being on the stack top. The exact semantic of
@@ -95,11 +95,11 @@
 //     Every stack entry is 64 bits and appropriately aligned. There is no padding. The instructions + and - add and subtract N items from the stack pointer, respectively. Items are not
 //     necessarily lost when you increment the stack pointer beyond them, though they aren't preserved if overwritten.
 
-//     Two convenient operators are z and Z, which stash the top one or two stack entries respectively, calls the function on top of the stack, and pushes the one or two stashed entries back onto
+//     Two convenient operators are z and Z, which stash the top one or N stack entries respectively, calls the function on top of the stack, and pushes the one or two stashed entries back onto
 //     the stack. Usage is like this:
 
-//     | k1 k2 k3 k4 [a]Z  ->  k3 k3 k4
-//       k1 k2 k3 k4 [a]z  ->  k1 k5 k4
+//     | k1 k2 k3 k4 [a]tZ  ->  k3 k3 k4
+//       k1 k2 k3 k4 [a]z   ->  k1 k5 k4
 
 //     Memory addressing.
 //     The * operator retrieves memory at the specified address, and = takes an address A and a value V and sets memory at A to V, popping both A and V. Both of these operators are assumed to
@@ -133,7 +133,7 @@
 //     pointer and returns nothing. All memory allocated by m is 8-byte aligned.
 
 //   Examples.
-//   This language wasn't intended to produce readable programs, but here are some examples:
+//   This language wasn't intended to produce readable programs, but here are some examples (the first two written before the y combinator was defined):
 
 //     Sum numbers.
 //     This function pops N and pushes the sum of the numbers from 1 to N inclusive. The stack layout is generally (loop continuation) (sum) (immediate).

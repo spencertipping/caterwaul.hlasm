@@ -16,8 +16,9 @@ static e tmp;
 
 int main() {
 
-static void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int, &&pixel};
-static void** gs = globals + 4;
+void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int, &&pixel};
+void** gs = globals + 4;
+int i = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
@@ -26,8 +27,8 @@ pr_float: printf("%f\n", *d++); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
-// Begin g1: [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I] /] [k6+k] /]
-g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I] /] [k6+k] /]");
+// Begin g1: [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]
+g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]");
 /* [ */ *--d = &&g2;
 /* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g3; goto *tmp; g3: *--d = *--D; trace;
 /* K */ start("K"); *--d = 1; trace;
@@ -194,8 +195,8 @@ g28:fprintf(stderr, "\n%""s %""d %""s", "g28", &&g28 - (long long)&main, "[Kvk10
 /* ] */ start("]"); goto **c++; trace;
 // End g28
 
-// Begin g4: [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I] /]
-g4:fprintf(stderr, "\n%""s %""d %""s", "g4", &&g4 - (long long)&main, "[Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I] /]");
+// Begin g4: [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /]
+g4:fprintf(stderr, "\n%""s %""d %""s", "g4", &&g4 - (long long)&main, "[Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /]");
 /* T */ start("T"); *--d = 3; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* . */ start("."); *--d = d[1]; trace;
@@ -236,10 +237,11 @@ g6:fprintf(stderr, "\n%""s %""d %""s", "g6", &&g6 - (long long)&main, "[k6+]");
 /* ] */ start("]"); goto **c++; trace;
 // End g6
 
-// Begin g8: [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I]
-g8:fprintf(stderr, "\n%""s %""d %""s", "g8", &&g8 - (long long)&main, "[[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I]");
+// Begin g8: [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I]
+g8:fprintf(stderr, "\n%""s %""d %""s", "g8", &&g8 - (long long)&main, "[[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I]");
 /* [ */ *--d = &&g9;
-/* Z */ start("Z"); tmp = *d++; *D++=*d++; *D++=*d++; *--c = &&g12; goto *tmp; g12: *--d=*--D; *--d=*--D; trace;
+/* t */ start("t"); *--d = 2; trace;
+/* Z */ start("Z"); d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g12; goto *tmp; g12: for (i = *--D; i > 0; --i) *--d = *--D;; trace;
 /*   */ start(" "); ; trace;
 /* I */ start("I"); goto **d++; trace;
 /* ] */ start("]"); goto **c++; trace;
@@ -284,8 +286,8 @@ main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "Knv
 /* ] */ start("]"); goto **c++; trace;
 // End main
 
-// Begin pixel: KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I] /] [k6+k] /] Y
-pixel:fprintf(stderr, "\n%""s %""d %""s", "pixel", &&pixel - (long long)&main, "KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]Z I] /] [k6+k] /] Y");
+// Begin pixel: KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /] Y
+pixel:fprintf(stderr, "\n%""s %""d %""s", "pixel", &&pixel - (long long)&main, "KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /] Y");
 /* K */ start("K"); *--d = 1; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* K */ start("K"); *--d = 1; trace;
