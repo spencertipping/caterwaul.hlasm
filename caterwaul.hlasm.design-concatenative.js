@@ -79,7 +79,10 @@
 
 //     As a sanity check, any tail call operators should immediately precede a ].
 
-//     The y combinator works as it would in lambda-calculus. It invokes a function with a recursive step that repeats the process. Y is similar, but performs a tail call.
+//     The y combinator works as it would in lambda-calculus. It invokes a function with a recursive step that repeats the process. Y is similar, but performs a tail call. It is up to the backend
+//     to find an efficient way to compile this. Note that y and Y are not as free-form as they are in the lambda calculus. In particular, you can't tail-call into one from inside a z or Z block,
+//     just like you wouldn't be able to tail-call into a function from this position (or rather, you can but shouldn't). Consequently, Y allocates a call frame despite using tail calls for the
+//     looping; you should expect to use tail calls when looping but a standard return for the terminal case.
 
 //     Literals.
 //     The digits are used to build integers in decimal. This results in the bytecode reading naturally; for example, k14 results in the number 14 being on the stack top. The exact semantic of
