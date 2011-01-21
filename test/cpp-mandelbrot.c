@@ -28,279 +28,279 @@ std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
 // Begin g1: [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]
-g1:
+g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]");
 /* [ */ *--d = &&g2;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g3; goto *tmp; g3: *--d = *--D;
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
-/*   */ ;
+/* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g3; goto *tmp; g3: *--d = *--D; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g4;
-/*   */ ;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g13;
-/*   */ ;
-/* / */ goto **((d += 3) - 2 - !d[-1]);
-/* ] */ goto **c++;
+/*   */ start(" "); ; trace;
+/* / */ start("/"); goto **((d += 3) - 2 - !d[-1]); trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g1
 
 // Begin g10: [C.A KsA]
-g10:
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/* . */ *--d = d[1];
-/* A */ ((f*)d)[1] += *(f*)d++;
-/*   */ ;
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
-/* A */ ((f*)d)[1] += *(f*)d++;
-/* ] */ goto **c++;
+g10:fprintf(stderr, "\n%""s %""d %""s", "g10", &&g10 - (long long)&main, "[C.A KsA]");
+/* C */ start("C"); ((f*)d)[1] *= *(f*)d++; trace;
+/* . */ start("."); *--d = d[1]; trace;
+/* A */ start("A"); ((f*)d)[1] += *(f*)d++; trace;
+/*   */ start(" "); ; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* A */ start("A"); ((f*)d)[1] += *(f*)d++; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g10
 
 // Begin g13: [k6+k]
-g13:
-/* k */ *--d = 0;
-/* 6 */ *d *= 10; *d += 6;
-/* + */ d += *d + 1;
-/* k */ *--d = 0;
-/* ] */ goto **c++;
+g13:fprintf(stderr, "\n%""s %""d %""s", "g13", &&g13 - (long long)&main, "[k6+k]");
+/* k */ start("k"); *--d = 0; trace;
+/* 6 */ start("6"); *d *= 10; *d += 6; trace;
+/* + */ start("+"); d += *d + 1; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g13
 
-// Begin g16: [tsKvL [,k] [[tsKvL [KnvTS k10k4n:*,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]
-g16:
-/* t */ *--d = 2;
-/* s */ *d = d[*d + 1];
-/* K */ *--d = 1;
-/* v */ *(f*)d = (f)*d;
-/* L */ tmp = *(f*)d < *(f*)++d; *d = tmp;
-/*   */ ;
+// Begin g16: [KsKvL [k] [[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]
+g16:fprintf(stderr, "\n%""s %""d %""s", "g16", &&g16 - (long long)&main, "[KsKvL [k] [[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]");
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* L */ start("L"); tmp = *(f*)d < *(f*)++d; *d = tmp; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g17;
-/*   */ ;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g18;
-/*   */ ;
-/* / */ goto **((d += 3) - 2 - !d[-1]);
-/* ] */ goto **c++;
+/*   */ start(" "); ; trace;
+/* / */ start("/"); goto **((d += 3) - 2 - !d[-1]); trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g16
 
-// Begin g17: [,k]
-g17:
-/* , */ ++d;
-/* k */ *--d = 0;
-/* ] */ goto **c++;
+// Begin g17: [k]
+g17:fprintf(stderr, "\n%""s %""d %""s", "g17", &&g17 - (long long)&main, "[k]");
+/* k */ start("k"); *--d = 0; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g17
 
-// Begin g18: [[tsKvL [KnvTS k10k4n:*,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I]
-g18:
+// Begin g18: [[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I]
+g18:fprintf(stderr, "\n%""s %""d %""s", "g18", &&g18 - (long long)&main, "[[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I]");
 /* [ */ *--d = &&g19;
-/* y */ *D++ = *d++; *--c = &&g26; g27: *--d = &&g27; goto *D[-1]; g26: --D;
-/*   */ ;
-/* [ */ *--d = &&g28;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g29; goto *tmp; g29: *--d = *--D;
-/*   */ ;
-/* I */ goto **d++;
-/* ] */ goto **c++;
+/* y */ start("y"); *D++ = *d++; *--c = &&g27; g28: *--d = &&g28; goto *D[-1]; g27: --D; trace;
+/*   */ start(" "); ; trace;
+/* [ */ *--d = &&g29;
+/* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g30; goto *tmp; g30: *--d = *--D; trace;
+/*   */ start(" "); ; trace;
+/* I */ start("I"); goto **d++; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g18
 
-// Begin g19: [tsKvL [KnvTS k10k4n:*,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]
-g19:
-/* t */ *--d = 2;
-/* s */ *d = d[*d + 1];
-/* K */ *--d = 1;
-/* v */ *(f*)d = (f)*d;
-/* L */ tmp = *(f*)d < *(f*)++d; *d = tmp;
-/*   */ ;
+// Begin g19: [KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]
+g19:fprintf(stderr, "\n%""s %""d %""s", "g19", &&g19 - (long long)&main, "[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]");
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* L */ start("L"); tmp = *(f*)d < *(f*)++d; *d = tmp; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g20;
-/*   */ ;
-/* [ */ *--d = &&g21;
-/*   */ ;
-/* / */ goto **((d += 3) - 2 - !d[-1]);
-/* ] */ goto **c++;
+/*   */ start(" "); ; trace;
+/* [ */ *--d = &&g22;
+/*   */ start(" "); ; trace;
+/* / */ start("/"); goto **((d += 3) - 2 - !d[-1]); trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g19
 
 // Begin g2: [E]
-g2:
-/* E */ --*d;
-/* ] */ goto **c++;
+g2:fprintf(stderr, "\n%""s %""d %""s", "g2", &&g2 - (long long)&main, "[E]");
+/* E */ start("E"); --*d; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g2
 
-// Begin g20: [KnvTS k10k4n:*,]
-g20:
-/* K */ *--d = 1;
-/* n */ *d = -*d;
-/* v */ *(f*)d = (f)*d;
-/* T */ *--d = 3;
-/* S */ d[*d + 1] = *d; ++d;
-/*   */ ;
-/* k */ *--d = 0;
-/* 1 */ *d *= 10; *d += 1;
-/* 0 */ *d *= 10; *d += 0;
-/* k */ *--d = 0;
-/* 4 */ *d *= 10; *d += 4;
-/* n */ *d = -*d;
-/* : */ *d = gs + *d;
-/* * */ *d = *(e*)(*d);
-/* , */ ++d;
-/* ] */ goto **c++;
+// Begin g20: [KnvTS k10k4n:*i,]
+g20:fprintf(stderr, "\n%""s %""d %""s", "g20", &&g20 - (long long)&main, "[KnvTS k10k4n:*i,]");
+/* K */ start("K"); *--d = 1; trace;
+/* n */ start("n"); *d = -*d; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* T */ start("T"); *--d = 3; trace;
+/* S */ start("S"); d[*d + 1] = *d; d += 2; trace;
+/*   */ start(" "); ; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 1 */ start("1"); *d *= 10; *d += 1; trace;
+/* 0 */ start("0"); *d *= 10; *d += 0; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 4 */ start("4"); *d *= 10; *d += 4; trace;
+/* n */ start("n"); *d = -*d; trace;
+/* : */ start(":"); *d = gs + *d; trace;
+/* * */ start("*"); *d = *(e*)(*d); trace;
+/* i */ start("i"); *--c = &&g21; goto **d++; g21:; trace;
+/* , */ start(","); ++d; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g20
 
-// Begin g21: [TsTs _*i k32a k4n:*i [Kvk10vDA]z I]
-g21:
-/* T */ *--d = 3;
-/* s */ *d = d[*d + 1];
-/* T */ *--d = 3;
-/* s */ *d = d[*d + 1];
-/*   */ ;
-/* _ */ *--d = gs;
-/* * */ *d = *(e*)(*d);
-/* i */ *--c = &&g22; goto **d++; g22:;
-/*   */ ;
-/* k */ *--d = 0;
-/* 3 */ *d *= 10; *d += 3;
-/* 2 */ *d *= 10; *d += 2;
-/* a */ d[1] += *d++;
-/*   */ ;
-/* k */ *--d = 0;
-/* 4 */ *d *= 10; *d += 4;
-/* n */ *d = -*d;
-/* : */ *d = gs + *d;
-/* * */ *d = *(e*)(*d);
-/* i */ *--c = &&g23; goto **d++; g23:;
-/*   */ ;
-/* [ */ *--d = &&g24;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g25; goto *tmp; g25: *--d = *--D;
-/*   */ ;
-/* I */ goto **d++;
-/* ] */ goto **c++;
-// End g21
+// Begin g22: [TsTs _*i k32a k4n:*i [Kvk10vDA]z I]
+g22:fprintf(stderr, "\n%""s %""d %""s", "g22", &&g22 - (long long)&main, "[TsTs _*i k32a k4n:*i [Kvk10vDA]z I]");
+/* T */ start("T"); *--d = 3; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* T */ start("T"); *--d = 3; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/*   */ start(" "); ; trace;
+/* _ */ start("_"); *--d = gs; trace;
+/* * */ start("*"); *d = *(e*)(*d); trace;
+/* i */ start("i"); *--c = &&g23; goto **d++; g23:; trace;
+/*   */ start(" "); ; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 3 */ start("3"); *d *= 10; *d += 3; trace;
+/* 2 */ start("2"); *d *= 10; *d += 2; trace;
+/* a */ start("a"); d[1] += *d++; trace;
+/*   */ start(" "); ; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 4 */ start("4"); *d *= 10; *d += 4; trace;
+/* n */ start("n"); *d = -*d; trace;
+/* : */ start(":"); *d = gs + *d; trace;
+/* * */ start("*"); *d = *(e*)(*d); trace;
+/* i */ start("i"); *--c = &&g24; goto **d++; g24:; trace;
+/*   */ start(" "); ; trace;
+/* [ */ *--d = &&g25;
+/* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g26; goto *tmp; g26: *--d = *--D; trace;
+/*   */ start(" "); ; trace;
+/* I */ start("I"); goto **d++; trace;
+/* ] */ start("]"); goto **c++; trace;
+// End g22
 
-// Begin g24: [Kvk10vDA]
-g24:
-/* K */ *--d = 1;
-/* v */ *(f*)d = (f)*d;
-/* k */ *--d = 0;
-/* 1 */ *d *= 10; *d += 1;
-/* 0 */ *d *= 10; *d += 0;
-/* v */ *(f*)d = (f)*d;
-/* D */ ((f*)d)[1] /= *(f*)d++;
-/* A */ ((f*)d)[1] += *(f*)d++;
-/* ] */ goto **c++;
-// End g24
+// Begin g25: [Kvk10vDA]
+g25:fprintf(stderr, "\n%""s %""d %""s", "g25", &&g25 - (long long)&main, "[Kvk10vDA]");
+/* K */ start("K"); *--d = 1; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 1 */ start("1"); *d *= 10; *d += 1; trace;
+/* 0 */ start("0"); *d *= 10; *d += 0; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* D */ start("D"); ((f*)d)[1] /= *(f*)d++; trace;
+/* A */ start("A"); ((f*)d)[1] += *(f*)d++; trace;
+/* ] */ start("]"); goto **c++; trace;
+// End g25
 
-// Begin g28: [Kvk10vDA]
-g28:
-/* K */ *--d = 1;
-/* v */ *(f*)d = (f)*d;
-/* k */ *--d = 0;
-/* 1 */ *d *= 10; *d += 1;
-/* 0 */ *d *= 10; *d += 0;
-/* v */ *(f*)d = (f)*d;
-/* D */ ((f*)d)[1] /= *(f*)d++;
-/* A */ ((f*)d)[1] += *(f*)d++;
-/* ] */ goto **c++;
-// End g28
+// Begin g29: [Kvk10vDA]
+g29:fprintf(stderr, "\n%""s %""d %""s", "g29", &&g29 - (long long)&main, "[Kvk10vDA]");
+/* K */ start("K"); *--d = 1; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 1 */ start("1"); *d *= 10; *d += 1; trace;
+/* 0 */ start("0"); *d *= 10; *d += 0; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* D */ start("D"); ((f*)d)[1] /= *(f*)d++; trace;
+/* A */ start("A"); ((f*)d)[1] += *(f*)d++; trace;
+/* ] */ start("]"); goto **c++; trace;
+// End g29
 
 // Begin g4: [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /]
-g4:
-/* T */ *--d = 3;
-/* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/* T */ *--d = 3;
-/* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/* A */ ((f*)d)[1] += *(f*)d++;
-/*   */ ;
-/* k */ *--d = 0;
-/* 4 */ *d *= 10; *d += 4;
-/* v */ *(f*)d = (f)*d;
-/* L */ tmp = *(f*)d < *(f*)++d; *d = tmp;
-/*   */ ;
+g4:fprintf(stderr, "\n%""s %""d %""s", "g4", &&g4 - (long long)&main, "[Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /]");
+/* T */ start("T"); *--d = 3; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* . */ start("."); *--d = d[1]; trace;
+/* C */ start("C"); ((f*)d)[1] *= *(f*)d++; trace;
+/* T */ start("T"); *--d = 3; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* . */ start("."); *--d = d[1]; trace;
+/* C */ start("C"); ((f*)d)[1] *= *(f*)d++; trace;
+/* A */ start("A"); ((f*)d)[1] += *(f*)d++; trace;
+/*   */ start(" "); ; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 4 */ start("4"); *d *= 10; *d += 4; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/* L */ start("L"); tmp = *(f*)d < *(f*)++d; *d = tmp; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g5;
-/*   */ ;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g8;
-/*   */ ;
-/* / */ goto **((d += 3) - 2 - !d[-1]);
-/* ] */ goto **c++;
+/*   */ start(" "); ; trace;
+/* / */ start("/"); goto **((d += 3) - 2 - !d[-1]); trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g4
 
 // Begin g5: [Ks[k6+]z]
-g5:
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
+g5:fprintf(stderr, "\n%""s %""d %""s", "g5", &&g5 - (long long)&main, "[Ks[k6+]z]");
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
 /* [ */ *--d = &&g6;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g7; goto *tmp; g7: *--d = *--D;
-/* ] */ goto **c++;
+/* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g7; goto *tmp; g7: *--d = *--D; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g5
 
 // Begin g6: [k6+]
-g6:
-/* k */ *--d = 0;
-/* 6 */ *d *= 10; *d += 6;
-/* + */ d += *d + 1;
-/* ] */ goto **c++;
+g6:fprintf(stderr, "\n%""s %""d %""s", "g6", &&g6 - (long long)&main, "[k6+]");
+/* k */ start("k"); *--d = 0; trace;
+/* 6 */ start("6"); *d *= 10; *d += 6; trace;
+/* + */ start("+"); d += *d + 1; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g6
 
 // Begin g8: [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I]
-g8:
+g8:fprintf(stderr, "\n%""s %""d %""s", "g8", &&g8 - (long long)&main, "[[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I]");
 /* [ */ *--d = &&g9;
-/* t */ *--d = 2;
-/* Z */ d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g12; goto *tmp; g12: for (i = *--D; i > 0; --i) *--d = *--D;
-/*   */ ;
-/* I */ goto **d++;
-/* ] */ goto **c++;
+/* t */ start("t"); *--d = 2; trace;
+/* Z */ start("Z"); d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&g12; goto *tmp; g12: for (i = *--D; i > 0; --i) *--d = *--D; trace;
+/*   */ start(" "); ; trace;
+/* I */ start("I"); goto **d++; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g8
 
 // Begin g9: [Ks.C Ks.C B k4sA [C.A KsA]z w]
-g9:
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/*   */ ;
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/*   */ ;
-/* B */ ((f*)d)[1] -= *(f*)d++;
-/*   */ ;
-/* k */ *--d = 0;
-/* 4 */ *d *= 10; *d += 4;
-/* s */ *d = d[*d + 1];
-/* A */ ((f*)d)[1] += *(f*)d++;
-/*   */ ;
+g9:fprintf(stderr, "\n%""s %""d %""s", "g9", &&g9 - (long long)&main, "[Ks.C Ks.C B k4sA [C.A KsA]z w]");
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* . */ start("."); *--d = d[1]; trace;
+/* C */ start("C"); ((f*)d)[1] *= *(f*)d++; trace;
+/*   */ start(" "); ; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* . */ start("."); *--d = d[1]; trace;
+/* C */ start("C"); ((f*)d)[1] *= *(f*)d++; trace;
+/*   */ start(" "); ; trace;
+/* B */ start("B"); ((f*)d)[1] -= *(f*)d++; trace;
+/*   */ start(" "); ; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 4 */ start("4"); *d *= 10; *d += 4; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* A */ start("A"); ((f*)d)[1] += *(f*)d++; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g10;
-/* z */ tmp = *d++; *D++=*d++; *--c = &&g11; goto *tmp; g11: *--d = *--D;
-/*   */ ;
-/* w */ tmp = *d; *d = d[1]; d[1] = tmp;
-/* ] */ goto **c++;
+/* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g11; goto *tmp; g11: *--d = *--D; trace;
+/*   */ start(" "); ; trace;
+/* w */ start("w"); tmp = *d; *d = d[1]; d[1] = tmp; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End g9
 
-// Begin main: Knv . [tsKvL [,k] [[tsKvL [KnvTS k10k4n:*,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]y
-main:
-/* K */ *--d = 1;
-/* n */ *d = -*d;
-/* v */ *(f*)d = (f)*d;
-/*   */ ;
-/* . */ *--d = d[1];
-/*   */ ;
+// Begin main: Knv . [KsKvL [k] [[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]y
+main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "Knv . [KsKvL [k] [[KsKvL [KnvTS k10k4n:*i,] [TsTs _*i k32a k4n:*i [Kvk10vDA]z I] /]y [Kvk10vDA]z I] /]y");
+/* K */ start("K"); *--d = 1; trace;
+/* n */ start("n"); *d = -*d; trace;
+/* v */ start("v"); *(f*)d = (f)*d; trace;
+/*   */ start(" "); ; trace;
+/* . */ start("."); *--d = d[1]; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g16;
-/* y */ *D++ = *d++; *--c = &&g30; g31: *--d = &&g31; goto *D[-1]; g30: --D;
-/* ] */ goto **c++;
+/* y */ start("y"); *D++ = *d++; *--c = &&g31; g32: *--d = &&g32; goto *D[-1]; g31: --D; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End main
 
 // Begin pixel: KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]y
-pixel:
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
-/* K */ *--d = 1;
-/* s */ *d = d[*d + 1];
-/*   */ ;
-/* k */ *--d = 0;
-/* 5 */ *d *= 10; *d += 5;
-/* 0 */ *d *= 10; *d += 0;
-/*   */ ;
+pixel:fprintf(stderr, "\n%""s %""d %""s", "pixel", &&pixel - (long long)&main, "KsKs k50 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]y");
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* s */ start("s"); *d = d[*d + 1]; trace;
+/*   */ start(" "); ; trace;
+/* k */ start("k"); *--d = 0; trace;
+/* 5 */ start("5"); *d *= 10; *d += 5; trace;
+/* 0 */ start("0"); *d *= 10; *d += 0; trace;
+/*   */ start(" "); ; trace;
 /* [ */ *--d = &&g1;
-/* y */ *D++ = *d++; *--c = &&g14; g15: *--d = &&g15; goto *D[-1]; g14: --D;
-/* ] */ goto **c++;
+/* y */ start("y"); *D++ = *d++; *--c = &&g14; g15: *--d = &&g15; goto *D[-1]; g14: --D; trace;
+/* ] */ start("]"); goto **c++; trace;
 // End pixel
 
 }

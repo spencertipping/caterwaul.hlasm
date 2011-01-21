@@ -28,7 +28,7 @@
 //   Instruction index.
 //   The sections after this cover operators by topic. This index does the opposite; it lists operators by their character.
 
-//   | &|^~!<>{}   integer bitwise operations (< and > perform arithmetic shifts, { and } perform unsigned shifts)
+//   | &|^~!<>     integer bitwise operations (< and > perform arithmetic shifts)
 //     []          code quotation (with implicit return)
 //     .,          duplicate, drop top stack entry
 //     +-          increment, decrement data stack pointer by N items
