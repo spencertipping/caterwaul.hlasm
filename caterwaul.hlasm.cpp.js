@@ -44,7 +44,7 @@
              ts.r() = gs() /re['++d; if (*d) {++d; *--c = #{_}; goto *d[-2];} #{_}:'], ts.R() = gs() /re['++d; if (!*d) {++d; *--c = #{_}; goto *d[-2];} #{_}:'],
 
              ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.I() = 'goto **d++', ts[']']() = 'goto **c++', ts.m() = '*d = malloc(*d)', ts.M() = 'free(*d++)',
-             ts.Y() = l[e = gs(), r = gs()] in '*D++ = *d++; *--c = &&#{e}; #{r}: *--d = &&#{r}; goto *D[-1]; #{e}: --D',
+             ts.y() = l[e = gs(), r = gs()] in '*D++ = *d++; *--c = &&#{e}; #{r}: *--d = &&#{r}; goto *D[-1]; #{e}: --D',
 
              ts.l() = 'tmp = *d < *++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1', ts.t() = '*--d = 2', ts.T() = '*--d = 3',
              ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d + 1] = *d; ++d', ts.v() = '*(f*)d = (f)*d', ts.V() = '*d = (e)*(f*)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',

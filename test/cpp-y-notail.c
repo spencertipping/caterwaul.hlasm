@@ -16,8 +16,9 @@ static e tmp;
 
 int main() {
 
-static void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
-static void** gs = globals + 4;
+void* globals[] = {&&write_c, &&std_call, &&pr_float, &&pr_int};
+void** gs = globals + 4;
+int i = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
@@ -73,8 +74,8 @@ g7:fprintf(stderr, "\n%""s %""d %""s", "g7", &&g7 - (long long)&main, "[,]");
 /* ] */ start("]"); goto **c++; trace;
 // End g7
 
-// Begin main: k5 K [ts [[KscwEw]z i] [,[,]z] ?] Y
-main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k5 K [ts [[KscwEw]z i] [,[,]z] ?] Y");
+// Begin main: k5 K [ts [[KscwEw]z i] [,[,]z] ?] y
+main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k5 K [ts [[KscwEw]z i] [,[,]z] ?] y");
 /* k */ start("k"); *--d = 0; trace;
 /* 5 */ start("5"); *d *= 10; *d += 5; trace;
 /*   */ start(" "); ; trace;
@@ -82,7 +83,7 @@ main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "k5 
 /*   */ start(" "); ; trace;
 /* [ */ *--d = &&g1;
 /*   */ start(" "); ; trace;
-/* Y */ start("Y"); *D++ = *d++; *--c = &&g10; g11: *--d = &&g11; goto *D[-1]; g10: --D; trace;
+/* y */ start("y"); *D++ = *d++; *--c = &&g10; g11: *--d = &&g11; goto *D[-1]; g10: --D; trace;
 /* ] */ start("]"); goto **c++; trace;
 // End main
 
