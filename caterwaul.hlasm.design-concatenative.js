@@ -56,6 +56,7 @@
 //     vV          integer -> double, double -> integer
 //     w           swap top two stack entries
 //     y           fixed point: [x] y -> [[x] y] [x]I (always tail-recursive for the looping step)
+//     Y           numbered loop: [x] n Y -> Nx...Nx (x n times, each time receiving a number from 0 to n - 1)
 //     zZ          stash top entry, execute function, push stashed entry (Z stashes N, where N is the number on top of the stack)
 
 //   Instruction categories.
@@ -83,6 +84,8 @@
 //     The y function is similar to the fixed point from lambda calculus, but performs a tail call. It is up to the backend to find an efficient way to compile this. Note that y is not as
 //     free-form as it could be. In particular, z and Z are not tail calls, so you can't (shouldn't) try to escape into a loop from inside (come to think of it, I can't see a situation where this
 //     would pose a problem; so most likely it doesn't matter). The terminal case should return normally however; y allocates exactly one call frame to clean up temporary variables.
+
+//     Y is useful for the common case of iterating a function a preset number of times. The function gets the current index as a parameter for each iteration; the index varies from 0 to n - 1.
 
 //     Literals.
 //     The digits are used to build integers in decimal. This results in the bytecode reading naturally; for example, k14 results in the number 14 being on the stack top. The exact semantic of
