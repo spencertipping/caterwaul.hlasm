@@ -17,8 +17,8 @@ static e tmp;
 
 int main() {
 
-void* globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c};
-void** gs = globals + 104;
+e globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c};
+e* gs = globals + 104;
 int i = 0;
 e *j = 0;
 *--c = &&exit;
@@ -26,21 +26,22 @@ goto main;
 exit: return *d;
 pr_int: printf("%""d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
-pr_stacks: fprintf(stderr, "[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d%""20d%""10f\n", j - d, *j, *j);
-           fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d%""20d", j - c, *j - (e)(&main));
-           fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d%""20d%""20d%""10f\n", j - dtmp, *j, *j - (e)(&main), *j);
-           goto **c++;
-sleep_ms: usleep(*d++); goto **c++;
+pr_stacks:
+fprintf(stderr, "\n[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - d, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - dtmp, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20d|dv\n", j - c, *j - (e)(&main));
+goto **c++;
+sleep_ms: usleep(*d++ * 1000); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
-// Begin g1: [[. [.[a]z E tsI] [,w, k101n:*ik] /]]
+// Begin g1: [[. [.[a]z E tsI] [,w, k101ngk] /]]
 g1:
 /* [ */ *--d = &&g2;
 /* ] */ goto **c++;
 // End g1
 
-// Begin g2: [. [.[a]z E tsI] [,w, k101n:*ik] /]
+// Begin g2: [. [.[a]z E tsI] [,w, k101ngk] /]
 g2:
 /* . */ *--d = d[1];
 /*   */ ;
@@ -72,7 +73,7 @@ g4:
 /* ] */ goto **c++;
 // End g4
 
-// Begin g6: [,w, k101n:*ik]
+// Begin g6: [,w, k101ngk]
 g6:
 /* , */ ++d;
 /* w */ tmp = *d; *d = d[1]; d[1] = tmp;
@@ -83,14 +84,12 @@ g6:
 /* 0 */ *d *= 10; *d += 0;
 /* 1 */ *d *= 10; *d += 1;
 /* n */ *d = -*d;
-/* : */ *d = gs + *d;
-/* * */ *d = *(e*)(*d);
-/* i */ *--c = &&g7; goto **d++; g7:;
+/* g */ *--c = &&g7; goto *gs[*d++]; g7:;
 /* k */ *--d = 0;
 /* ] */ goto **c++;
 // End g6
 
-// Begin main: k10 kw [[. [.[a]z E tsI] [,w, k101n:*ik] /]]tZ tsI
+// Begin main: k10 kw [[. [.[a]z E tsI] [,w, k101ngk] /]]tZ tsI
 main:
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;

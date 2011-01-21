@@ -17,8 +17,8 @@ static e tmp;
 
 int main() {
 
-void* globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c, &&pixel};
-void** gs = globals + 104;
+e globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &&write_c, &&pixel};
+e* gs = globals + 104;
 int i = 0;
 e *j = 0;
 *--c = &&exit;
@@ -71,7 +71,7 @@ g13:
 /* ] */ goto **c++;
 // End g13
 
-// Begin g16: [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]
+// Begin g16: [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10KnG] [TsTs kg k63& k32a Kng [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]
 g16:
 /* t */ *--d = 2;
 /* s */ *d = d[*d + 1];
@@ -98,7 +98,7 @@ g17:
 /* ] */ goto **c++;
 // End g17
 
-// Begin g18: [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I]
+// Begin g18: [[tsKvL [KnvTeS, k10KnG] [TsTs kg k63& k32a Kng [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I]
 g18:
 /* [ */ *--d = &&g19;
 /* y */ *D++ = *d++; *--c = &&g26; g27: *--d = &&g27; goto *D[-1]; g26: --D;
@@ -111,7 +111,7 @@ g18:
 /* ] */ goto **c++;
 // End g18
 
-// Begin g19: [tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]
+// Begin g19: [tsKvL [KnvTeS, k10KnG] [TsTs kg k63& k32a Kng [Kvk90vDA]tZ I] /]
 g19:
 /* t */ *--d = 2;
 /* s */ *d = d[*d + 1];
@@ -133,7 +133,7 @@ g2:
 /* ] */ goto **c++;
 // End g2
 
-// Begin g20: [KnvTeS, k10Kn:*I]
+// Begin g20: [KnvTeS, k10KnG]
 g20:
 /* K */ *--d = 1;
 /* n */ *d = -*d;
@@ -148,22 +148,19 @@ g20:
 /* 0 */ *d *= 10; *d += 0;
 /* K */ *--d = 1;
 /* n */ *d = -*d;
-/* : */ *d = gs + *d;
-/* * */ *d = *(e*)(*d);
-/* I */ goto **d++;
+/* G */ goto *gs[*d++];
 /* ] */ goto **c++;
 // End g20
 
-// Begin g21: [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I]
+// Begin g21: [TsTs kg k63& k32a Kng [Kvk90vDA]tZ I]
 g21:
 /* T */ *--d = 3;
 /* s */ *d = d[*d + 1];
 /* T */ *--d = 3;
 /* s */ *d = d[*d + 1];
 /*   */ ;
-/* _ */ *--d = gs;
-/* * */ *d = *(e*)(*d);
-/* i */ *--c = &&g22; goto **d++; g22:;
+/* k */ *--d = 0;
+/* g */ *--c = &&g22; goto *gs[*d++]; g22:;
 /*   */ ;
 /* k */ *--d = 0;
 /* 6 */ *d *= 10; *d += 6;
@@ -177,9 +174,7 @@ g21:
 /*   */ ;
 /* K */ *--d = 1;
 /* n */ *d = -*d;
-/* : */ *d = gs + *d;
-/* * */ *d = *(e*)(*d);
-/* i */ *--c = &&g23; goto **d++; g23:;
+/* g */ *--c = &&g23; goto *gs[*d++]; g23:;
 /*   */ ;
 /* [ */ *--d = &&g24;
 /* t */ *--d = 2;
@@ -293,7 +288,7 @@ g9:
 /* ] */ goto **c++;
 // End g9
 
-// Begin main: tnv Knv [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]y
+// Begin main: tnv Knv [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10KnG] [TsTs kg k63& k32a Kng [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]y
 main:
 /* t */ *--d = 2;
 /* n */ *d = -*d;

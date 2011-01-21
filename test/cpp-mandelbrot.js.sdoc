@@ -7,4 +7,4 @@ This is a fairly involved example. It uses multiple labeled functions and perfor
 caterwaul.clone('std seq continuation llasm.numerics hlasm.cpp')(function () {
   console.log(caterwaul.hlasm.cpp(code, {trace: false, layout: 'pixel'})),
   where[code = {pixel: 'KsKs k1000 [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]y',
-                 main: 'tnv Knv [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10Kn:*I] [TsTs _*i k63& k32a Kn:*i [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]y'}]})();
+                 main: 'tnv Knv [tsKvTvD.AL [k] [[tsKvL [KnvTeS, k10KnG] [TsTs kg k63& k32a Kng [Kvk90vDA]tZ I] /]y [Kvk40vDA]tZ I] /]y'}]})();

@@ -37,14 +37,14 @@ exactly one character. The following sections outline the available operations.
     /           same as ?, but tail-call instead of standard call
     @#          get, set data stack address
     $%          get, set call stack address (dangerous; the call stack has no specified alignment or item size)
-    _           global section address
-    :           address of global at specified index (equivalent to T<_a)
+    _           address of global 0
 
   | 0123456789  multiply stack top by 10, then add digit value (used with k; becomes k100 for the number 100, for instance)
     ABCD        floating point addition, subtraction, multiplication, and division
     abcd        integer addition, subtraction, multiplication, and divmod
     eE          increment, decrement
     fF          if, if tail-call
+    gG          call, tail-call global N (equivalent to T<_a*i and T<_a*I)
     iI          function call (pushes 64-bit return address onto the code stack), tail call (doesn't manipulate the code stack in any way)
     kK          push 0, 1 onto the stack
     lL          integer less-than (signed), floating less-than
