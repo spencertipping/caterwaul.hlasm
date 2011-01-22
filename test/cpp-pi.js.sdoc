@@ -5,7 +5,7 @@ Uses the Rabinowitz/Wagon spigot algorithm. This program is based on the obfusca
 
 Making it slightly more readable (though no less obscure):
 
-| int a[52514], b = 0, c = 52514, d = 0, e = 0, f = 10000, g = 0, first = 1;
+| int a[52514], b = 0, c = 52514, d = 10000, e = 10000, f = 10000, g = 0, first = 1;
   int main () {
     while (b = c -= 14) {
       e = d %= f;
@@ -25,5 +25,5 @@ Here's the stack layout for the hlasm encoding:
       7 6 5 4 3 2 1 0
 
 caterwaul.clone('std seq continuation hlasm.cpp')(function () {
-  console.log(caterwaul.hlasm.cpp({main: 'K k52514.T<mw k10000 k.... ['},
-                                  {trace: false}))})();
+  l[c = 'K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k'] in
+  console.log(caterwaul.hlasm.cpp({main: c}, {trace: true}))})();

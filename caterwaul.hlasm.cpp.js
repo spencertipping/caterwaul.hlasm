@@ -29,13 +29,14 @@
                                         'e* gs = globals + 104;', 'int i = 0;', 'e *j = 0;', '*--c = &&exit;', 'goto main;',
                                         'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
                                         'pr_stacks:',
-                                        'fprintf(stderr, "\\n[data]\\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\\n", j - d, *j, *j - (e)(&main), *j);',
-                                        'fprintf(stderr, "[daux]\\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\\n", j - dtmp, *j, *j - (e)(&main), *j);',
-                                        'fprintf(stderr, "[code]\\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20d|dv\\n", j - c, *j - (e)(&main));',
+                                        'fprintf(stderr, "\\n[data]\\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20lld|v%""20lld|dv%""20lf|V\\n", j - d, *j, *j - (e)(&main), *j);',
+                                        'fprintf(stderr, "[daux]\\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20lld|v%""20lld|dv%""20lf|V\\n", j - dtmp, *j, *j - (e)(&main), *j);',
+                                        'fprintf(stderr, "[code]\\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20lld|dv\\n", j - c, *j - (e)(&main));',
                                         'goto **c++;',
                                         'sleep_ms: usleep(*d++ * 1000); goto **c++;', 'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
 
-           prerequisites(globals)    = ['#include<stdio.h>', '#include<unistd.h>', '#define DATA_S 1048576', '#define CODE_S 32768', '#define start(x) fprintf(stderr, "\\n%""8s", x)',
+           prerequisites(globals)    = ['#include<stdio.h>', '#include<unistd.h>', '#include<stdlib.h>', '', '#define DATA_S 1048576', '#define CODE_S 32768',
+                                        '#define start(x) fprintf(stderr, "\\n%""8s", x)',
                                         '#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", ' +
                                                               'D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
                                         '', 'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
@@ -43,14 +44,15 @@
 
            bytecode_translations     = {} /se.ts[
              seq[~'0123456789' *![ts[_]() = '*d *= 10; *d += #{_}']], seq[sp[{a:'+', b:'-', c:'*', '&':'&', '|':'|', '^':'^'}] *![ts[_[0]]() = 'd[1] #{_[1]}= *d++']],
-             ts.d() = gs() /re['e #{_} = d[0]; d[0] = d[1] % #{_}, d[1] /= #{_}'], seq[sp[{A:'+', B:'-', C:'*', D:'/'}] *![ts[_[0]]() = '((f*)d)[1] #{_[1]}= *(f*)d++']],
+             ts.d() = 'tmp = d[0]; d[0] = d[1] % tmp, d[1] /= tmp', seq[sp[{A:'+', B:'-', C:'*', D:'/'}] *![ts[_[0]]() = '((f*)d)[1] #{_[1]}= *(f*)d++']],
              seq[sp[{n:'-', '!':'!', '~':'~'}] *![ts[_[0]]() = '*d = #{_[1]}*d']], ts.e() = '++*d', ts.E() = '--*d', ts.n() = '*d = -*d', ts.N() = '*(*f)d = -*(*f)d',
-             ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts['*']() = '*d = *(e*)(*d)', ts['=']() = '*d[1] = *d; ++d',
+             ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts['*']() = '*d = *(e*)(*d)', ts['=']() = '*(e*)*d = d[1]; ++d',
 
              ts.r() = gs() /re['++d; if (*d) {++d; *--c = #{_}; goto *d[-2];} #{_}:'], ts.R() = gs() /re['++d; if (!*d) {++d; *--c = #{_}; goto *d[-2];} #{_}:'],
 
-             ts.g() = gs() /re['*--c = &&#{_}; goto *gs[*d++]; #{_}:'], ts.G() = 'goto *gs[*d++]', 
-             ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.I() = 'goto **d++', ts[']']() = 'goto **c++', ts.m() = '*d = malloc(*d)', ts.M() = 'free(*d++)',
+             ts.m() = '*(unsigned long long*)d = malloc(*d)', ts.M() = 'free(*(unsigned long long*)d++)',
+             ts.g() = gs() /re['*--c = &&#{_}; goto *gs[*d++]; #{_}:'], ts.G() = 'goto *gs[*d++]',
+             ts.i() = gs() /re['*--c = &&#{_}; goto **d++; #{_}:'], ts.I() = 'goto **d++', ts[']']() = 'goto **c++', 
              ts.y() = l[e = gs(), r = gs()] in '*D++ = *d++; *--c = &&#{e}; #{r}: *--d = &&#{r}; goto *D[-1]; #{e}: --D',
              ts.Y() = gs() /re['*D++ = *d++; *D++ = *d++; for (*D++ = 0; D[-1] < D[-3]; ++D[-1]) {*--c = &&#{_}; *--d = D[-1]; goto *D[-2]; #{_}:;} D -= 3'],
 
