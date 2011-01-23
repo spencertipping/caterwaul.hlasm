@@ -5,7 +5,7 @@
 //    main: x y | fx | fy -> 0
 
 caterwaul.clone('std seq continuation llasm.numerics hlasm.cpp')(function () {
-  console.log(caterwaul.hlasm.cpp(code, {trace: false, layout: 'pixel header iterations width height mask'})),
+  console.log('%s', caterwaul.hlasm.cpp(code, {trace: false, layout: 'pixel header iterations width height mask'})),
   where[code = {header: 'k65k15aKng k50Kng k10Kng k10Kng Tgk101ng k4gk101ng k10Kng k5gk101ng k10Kng',
                  width: 'k960', height: 'k1440', iterations: 'k512', mask: 'k15',
                  pixel: 'KsKs tg [[E]zKs [Ts.CTs.CA k4vL [Ks[k6+]z] [[Ks.C Ks.C B k4sA [C.A KsA]z w]tZ I] /] [k6+k] /]y',

@@ -26,4 +26,4 @@ Here's the stack layout for the hlasm encoding:
 
 caterwaul.clone('std seq continuation hlasm.cpp')(function () {
   l[c = 'K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k'] in
-  console.log(caterwaul.hlasm.cpp({main: c}, {trace: true}))})();
+  console.log('%s', caterwaul.hlasm.cpp({main: c}, {trace: true}))})();

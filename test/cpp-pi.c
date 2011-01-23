@@ -37,8 +37,8 @@ sleep_ms: usleep(*d++ * 1000); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
-// Begin g1: [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]zI] F]
-g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]zI] F]");
+// Begin g1: [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]
+g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]");
 /* k */ start("k"); *--d = 0; trace;
 /* 6 */ start("6"); *d *= 10; *d += 6; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
@@ -57,21 +57,20 @@ g1:fprintf(stderr, "\n%""s %""d %""s", "g1", &&g1 - (long long)&main, "[k6sk14b.
 /* S */ start("S"); d[*d] = d[1]; d += 2; trace;
 /*   */ start(" "); ; trace;
 /* [ */ *--d = &&g2;
-/*   */ start(" "); ; trace;
 /* F */ start("F"); d += 2; if (d[-1]) goto *d[-2]; trace;
 /* ] */ start("]"); goto **c++; trace;
 // End g1
 
-// Begin g2: [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]zI]
-g2:fprintf(stderr, "\n%""s %""d %""s", "g2", &&g2 - (long long)&main, "[[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]zI]");
+// Begin g2: [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]
+g2:fprintf(stderr, "\n%""s %""d %""s", "g2", &&g2 - (long long)&main, "[[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]");
 /* [ */ *--d = &&g3;
 /* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g10; goto *tmp; g10: *--d = *--D; trace;
 /* I */ start("I"); goto **d++; trace;
 /* ] */ start("]"); goto **c++; trace;
 // End g2
 
-// Begin g3: [Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]
-g3:fprintf(stderr, "\n%""s %""d %""s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]");
+// Begin g3: [Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]
+g3:fprintf(stderr, "\n%""s %""d %""s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]");
 /* K */ start("K"); *--d = 1; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* k */ start("k"); *--d = 0; trace;
@@ -112,15 +111,12 @@ g3:fprintf(stderr, "\n%""s %""d %""s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,
 /* 5 */ start("5"); *d *= 10; *d += 5; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* c */ start("c"); d[1] *= *d++; trace;
-/*   */ start(" "); ; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* c */ start("c"); d[1] *= *d++; trace;
-/*   */ start(" "); ; trace;
 /* a */ start("a"); d[1] += *d++; trace;
-/*   */ start(" "); ; trace;
 /* t */ start("t"); *--d = 2; trace;
 /* S */ start("S"); d[*d] = d[1]; d += 2; trace;
 /*   */ start(" "); ; trace;
@@ -185,8 +181,8 @@ g7:fprintf(stderr, "\n%""s %""d %""s", "g7", &&g7 - (long long)&main, "[k6sTsT<a
 /* ] */ start("]"); goto **c++; trace;
 // End g7
 
-// Begin main: K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]zI] F]y k6sM k7+ k
-main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5sc TsTsc a tS EKsd k7sk4sT<a k103ng = KS]zI] F]y k6sM k7+ k");
+// Begin main: K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k
+main:fprintf(stderr, "\n%""s %""d %""s", "main", &&main - (long long)&main, "K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k");
 /* K */ start("K"); *--d = 1; trace;
 /*   */ start(" "); ; trace;
 /* k */ start("k"); *--d = 0; trace;

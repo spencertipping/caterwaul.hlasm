@@ -19,7 +19,7 @@
                                           compiled = seq[~sk[derived].sort() *[[_, derived[_]]]
                                                          -[['// Begin #{_[0]}: #{_[1].source.replace(/\n/g, "")}',
                                                             '#{_[0]}:' + (os.trace ?
-                                                              'fprintf(stderr, "\\n%""s %""d %""s", "#{_[0]}", &&#{_[0]} - (long long)&main, "#{_[1].source.replace(/\n/g, "")}");' : ''),
+                                                              'fprintf(stderr, "\\n%s %d %s", "#{_[0]}", &&#{_[0]} - (long long)&main, "#{_[1].source.replace(/\n/g, "")}");' : ''),
                                                             _[1].generated.join(';\n') + ';', '// End #{_[0]}\n']]].join('\n')] in
                                        prelude + '\n\nint main() {\n\n#{main_setup(globals, os)}\n\n#{compiled}\n}',
 
@@ -27,17 +27,17 @@
            main_setup(globals, opts) = ['e globals[] = {&&sleep_ms, &&pr_stacks, &&pr_float, &&pr_int, #{seq[(0 >>>[_ + 1] <<[_ < 99]) *["NULL"]].join(", ")}, &&write_c' +
                                         (opts.layout ? seq[~opts.layout.split(/\s+/) *[', &&' + _]].join('') : '') + '};',
                                         'e* gs = globals + 104;', 'int i = 0;', 'e *j = 0;', '*--c = &&exit;', 'goto main;',
-                                        'exit: return *d;', 'pr_int: printf("%""d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
+                                        'exit: return *d;', 'pr_int: printf("%d\\n", *d++); goto **c++;', 'pr_float: printf("%f\\n", *d++); goto **c++;',
                                         'pr_stacks:',
-                                        'fprintf(stderr, "\\n[data]\\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20lld|v%""20lld|dv%""20lf|V\\n", j - d, *j, *j - (e)(&main), *j);',
-                                        'fprintf(stderr, "[daux]\\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20lld|v%""20lld|dv%""20lf|V\\n", j - dtmp, *j, *j - (e)(&main), *j);',
-                                        'fprintf(stderr, "[code]\\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20lld|dv\\n", j - c, *j - (e)(&main));',
+                                        'fprintf(stderr, "\\n[data]\\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%4d|i%20lld|v%20lld|dv%20lf|V\\n", j - d, *j, *j - (e)(&main), *j);',
+                                        'fprintf(stderr, "[daux]\\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%4d|i%20lld|v%20lld|dv%20lf|V\\n", j - dtmp, *j, *j - (e)(&main), *j);',
+                                        'fprintf(stderr, "[code]\\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%4d|i%20lld|dv\\n", j - c, *j - (e)(&main));',
                                         'goto **c++;',
                                         'sleep_ms: usleep(*d++ * 1000); goto **c++;', 'std_call: (*(void(*)())d++)(); goto **c++;', 'write_c: putc((char) *d++, stdout); goto **c++;'].join('\n'),
 
            prerequisites(globals)    = ['#include<stdio.h>', '#include<unistd.h>', '#include<stdlib.h>', '', '#define DATA_S 1048576', '#define CODE_S 32768',
-                                        '#define start(x) fprintf(stderr, "\\n%""8s", x)',
-                                        '#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", ' +
+                                        '#define start(x) fprintf(stderr, "\\n%8s", x)',
+                                        '#define trace fprintf(stderr, "%8d|x%8d|s%6d|c%20lld|v%20lld|dv%20lf|V", ' +
                                                               'D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
                                         '', 'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
                                         'static e *d = data + DATA_S;', 'static e *D = dtmp;', 'static e *c = code + CODE_S;', 'static e tmp;'].join('\n'),
