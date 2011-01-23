@@ -34,7 +34,7 @@ exactly one character. The following sections outline the available operations.
     +-          increment, decrement data stack pointer by N items
     *=          get, set memory whose address is stack top
     ?           N [f1] [f2] -- calls f1 or f2 depending on whether N is zero or nonzero, respectively
-    /           same as ?, but tail-call instead of standard call
+    /           same as ?, but tail-calls the function instead of pushing a return address onto the code stack
     @#          get, set data stack address
     $%          get, set call stack address (dangerous; the call stack has no specified alignment or item size)
     _           address of global 0
@@ -43,7 +43,7 @@ exactly one character. The following sections outline the available operations.
     ABCD        floating point addition, subtraction, multiplication, and division
     abcd        integer addition, subtraction, multiplication, and divmod
     eE          increment, decrement
-    fF          if, if tail-call
+    fF          N [f] if, N [f] if tail-call
     gG          call, tail-call global N (equivalent to T<_a*i and T<_a*I)
     iI          function call (pushes 64-bit return address onto the code stack), tail call (doesn't manipulate the code stack in any way)
     kK          push 0, 1 onto the stack
