@@ -64,7 +64,8 @@
 //   Symbolic instructions were chosen for mnemonic effect, often from C.
 
 //     Unused/reserved characters.
-//     Characters 0-32 inclusive are all no-ops, as are 127 and greater. They can all appear in bytecode, but will be ignored if they are in a command position.
+//     Characters 0-31 inclusive and 127 and above are all reserved for backend-specific purposes and aren't allowed to appear in the bytecode. Character 32 (space) is a no-op and should be
+//     ignored.
 
 //     Sometimes a no-op character is required, however. They are used to delimit variable-length things such as literal numbers and global identifiers.
 
