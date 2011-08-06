@@ -63,7 +63,7 @@ g2:fprintf(stderr, "\n%s %d %s", "g2", &&g2 - (long long)&main, "[[KscwEw]z I]")
 g3:fprintf(stderr, "\n%s %d %s", "g3", &&g3 - (long long)&main, "[KscwEw]");
 /* K */ start("K"); *--d = 1; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
-/* c */ start("c"); d[1] *= *d++; trace;
+/* c */ start("c"); d[1] *= *d; d++; trace;
 /* w */ start("w"); tmp = *d; *d = d[1]; d[1] = tmp; trace;
 /* E */ start("E"); --*d; trace;
 /* w */ start("w"); tmp = *d; *d = d[1]; d[1] = tmp; trace;

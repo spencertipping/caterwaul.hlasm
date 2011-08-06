@@ -38,13 +38,13 @@
            prerequisites(globals)    = ['#include<stdio.h>', '#include<unistd.h>', '#include<stdlib.h>', '', '#define DATA_S 1048576', '#define CODE_S 32768',
                                         '#define start(x) fprintf(stderr, "\\n%8s", x)',
                                         '#define trace fprintf(stderr, "%8d|x%8d|s%6d|c%20lld|v%20lld|dv%20lf|V", ' +
-                                                              'D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)',
-                                        '', 'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
+                                                              'D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)', '',
+                                        'typedef long long e;', 'typedef double f;', 'static e data[DATA_S];', 'static e code[CODE_S];', 'static e dtmp[DATA_S];',
                                         'static e *d = data + DATA_S;', 'static e *D = dtmp;', 'static e *c = code + CODE_S;', 'static e tmp;'].join('\n'),
 
            bytecode_translations     = {} /se.ts[
-             seq[~'0123456789' *![ts[_]() = '*d *= 10; *d += #{_}']], seq[sp[{a:'+', b:'-', c:'*', '&':'&', '|':'|', '^':'^'}] *![ts[_[0]]() = 'd[1] #{_[1]}= *d++']],
-             ts.d() = 'tmp = d[0]; d[0] = d[1] % tmp, d[1] /= tmp', seq[sp[{A:'+', B:'-', C:'*', D:'/'}] *![ts[_[0]]() = '((f*)d)[1] #{_[1]}= *(f*)d++']],
+             seq[~'0123456789' *![ts[_]() = '*d *= 10; *d += #{_}']], seq[sp[{a:'+', b:'-', c:'*', '&':'&', '|':'|', '^':'^'}] *![ts[_[0]]() = 'd[1] #{_[1]}= *d; d++']],
+             ts.d() = 'tmp = d[0]; d[0] = d[1] % tmp, d[1] /= tmp', seq[sp[{A:'+', B:'-', C:'*', D:'/'}] *![ts[_[0]]() = '((f*)d)[1] #{_[1]}= *(f*)d; d++']],
              seq[sp[{n:'-', '!':'!', '~':'~'}] *![ts[_[0]]() = '*d = #{_[1]}*d']], ts.e() = '++*d', ts.E() = '--*d', ts.n() = '*d = -*d', ts.N() = '*(*f)d = -*(*f)d',
              ts['<']() = 'd[1] <<= *d++', ts['>']() = 'd[1] >>= *d++', ts['_']() = '*--d = gs', ts['*']() = '*d = *(e*)(*d)', ts['=']() = '*(e*)*d = d[1]; ++d',
 
@@ -56,12 +56,12 @@
              ts.y() = l[e = gs(), r = gs()] in '*D++ = *d++; *--c = &&#{e}; #{r}: *--d = &&#{r}; goto *D[-1]; #{e}: --D',
              ts.Y() = gs() /re['*D++ = *d++; *D++ = *d++; for (*D++ = 0; D[-1] < D[-3]; ++D[-1]) {*--c = &&#{_}; *--d = D[-1]; goto *D[-2]; #{_}:;} D -= 3'],
 
-             ts.l() = 'tmp = *d < *++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1', ts.t() = '*--d = 2', ts.T() = '*--d = 3',
+             ts.l() = 'tmp = *d < *(d + 1); ++d; *d = tmp', ts.L() = 'tmp = *(f*)d < *(f*)(d + 1); ++d; *d = tmp', ts.k() = '*--d = 0', ts.K() = '*--d = 1',
              ts.s() = '*d = d[*d + 1]', ts.S() = 'd[*d] = d[1]; d += 2', ts.v() = '*(f*)d = (f)*d', ts.V() = '*d = (e)*(f*)d', ts.w() = 'tmp = *d; *d = d[1]; d[1] = tmp',
-             ts.z() = gs() /re['tmp = *d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d = *--D'],
+             ts.t() = '*--d = 2', ts.T() = '*--d = 3', ts.z() = gs() /re['tmp = *d++; *D++=*d++; *--c = &&#{_}; goto *tmp; #{_}: *--d = *--D'],
              ts.Z() = gs() /re['d += 2; for (i = 0; i < d[-2]; ++i) *D++=d[i]; tmp=d[-1]; d += *D++=i; *--c = &&#{_}; goto *tmp; #{_}: for (i = *--D; i > 0; --i) *--d = *--D'],
 
-             ts['.']() = '*--d = d[1]', ts[',']() = '++d', ts['+']() = 'd += *d + 1', ts['-']() = 'd -= *d - 1', ts['@']() = '*--d = d', ts['#']() = 'd = *d', ts['$']() = '*--d = c',
+             ts['.']() = '--d; *d = d[1]', ts[',']() = '++d', ts['+']() = 'd += *d + 1', ts['-']() = 'd -= *d - 1', ts['@']() = '*--d = d', ts['#']() = 'd = *d', ts['$']() = '*--d = c',
              ts['%']() = 'c = *d++', ts['?']() = gs() /re['*--c = &&#{_}; goto **((d += 3) - 2 - !d[-1]); #{_}:'], ts['/']() = 'goto **((d += 3) - 2 - !d[-1])',
                                      ts['f']() = gs() /re['d += 2; if (d[-1]) {*--c = #{_}; goto *d[-2];} #{_}:'], ts['F']() = 'd += 2; if (d[-1]) goto *d[-2]'],
 

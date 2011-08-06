@@ -1,9 +1,11 @@
 #include<stdio.h>
 #include<unistd.h>
+#include<stdlib.h>
+
 #define DATA_S 1048576
 #define CODE_S 32768
-#define start(x) fprintf(stderr, "\n%""8s", x)
-#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
+#define start(x) fprintf(stderr, "\n%8s", x)
+#define trace fprintf(stderr, "%8d|x%8d|s%6d|c%20lld|v%20lld|dv%20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
 
 typedef long long e;
 typedef double f;
@@ -24,12 +26,12 @@ e *j = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
-pr_int: printf("%""d\n", *d++); goto **c++;
+pr_int: printf("%d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
 pr_stacks:
-fprintf(stderr, "\n[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - d, *j, *j - (e)(&main), *j);
-fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - dtmp, *j, *j - (e)(&main), *j);
-fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20d|dv\n", j - c, *j - (e)(&main));
+fprintf(stderr, "\n[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%4d|i%20lld|v%20lld|dv%20lf|V\n", j - d, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%4d|i%20lld|v%20lld|dv%20lf|V\n", j - dtmp, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%4d|i%20lld|dv\n", j - c, *j - (e)(&main));
 goto **c++;
 sleep_ms: usleep(*d++ * 1000); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
@@ -60,18 +62,18 @@ g15:
 g17:
 /* T */ *--d = 3;
 /* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
+/* . */ --d; *d = d[1];
+/* C */ ((f*)d)[1] *= *(f*)d; d++;
 /* T */ *--d = 3;
 /* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/* A */ ((f*)d)[1] += *(f*)d++;
+/* . */ --d; *d = d[1];
+/* C */ ((f*)d)[1] *= *(f*)d; d++;
+/* A */ ((f*)d)[1] += *(f*)d; d++;
 /*   */ ;
 /* k */ *--d = 0;
 /* 4 */ *d *= 10; *d += 4;
 /* v */ *(f*)d = (f)*d;
-/* L */ tmp = *(f*)d < *(f*)++d; *d = tmp;
+/* L */ tmp = *(f*)d < *(f*)(d + 1); ++d; *d = tmp;
 /*   */ ;
 /* [ */ *--d = &&g18;
 /*   */ ;
@@ -112,20 +114,20 @@ g21:
 g22:
 /* K */ *--d = 1;
 /* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
+/* . */ --d; *d = d[1];
+/* C */ ((f*)d)[1] *= *(f*)d; d++;
 /*   */ ;
 /* K */ *--d = 1;
 /* s */ *d = d[*d + 1];
-/* . */ *--d = d[1];
-/* C */ ((f*)d)[1] *= *(f*)d++;
+/* . */ --d; *d = d[1];
+/* C */ ((f*)d)[1] *= *(f*)d; d++;
 /*   */ ;
-/* B */ ((f*)d)[1] -= *(f*)d++;
+/* B */ ((f*)d)[1] -= *(f*)d; d++;
 /*   */ ;
 /* k */ *--d = 0;
 /* 4 */ *d *= 10; *d += 4;
 /* s */ *d = d[*d + 1];
-/* A */ ((f*)d)[1] += *(f*)d++;
+/* A */ ((f*)d)[1] += *(f*)d; d++;
 /*   */ ;
 /* [ */ *--d = &&g23;
 /* z */ tmp = *d++; *D++=*d++; *--c = &&g24; goto *tmp; g24: *--d = *--D;
@@ -136,13 +138,13 @@ g22:
 
 // Begin g23: [C.A KsA]
 g23:
-/* C */ ((f*)d)[1] *= *(f*)d++;
-/* . */ *--d = d[1];
-/* A */ ((f*)d)[1] += *(f*)d++;
+/* C */ ((f*)d)[1] *= *(f*)d; d++;
+/* . */ --d; *d = d[1];
+/* A */ ((f*)d)[1] += *(f*)d; d++;
 /*   */ ;
 /* K */ *--d = 1;
 /* s */ *d = d[*d + 1];
-/* A */ ((f*)d)[1] += *(f*)d++;
+/* A */ ((f*)d)[1] += *(f*)d; d++;
 /* ] */ goto **c++;
 // End g23
 
@@ -184,8 +186,8 @@ g30:
 /* 4 */ *d *= 10; *d += 4;
 /* g */ *--c = &&g40; goto *gs[*d++]; g40:;
 /* v */ *(f*)d = (f)*d;
-/* D */ ((f*)d)[1] /= *(f*)d++;
-/* A */ ((f*)d)[1] += *(f*)d++;
+/* D */ ((f*)d)[1] /= *(f*)d; d++;
+/* A */ ((f*)d)[1] += *(f*)d; d++;
 /* ] */ goto **c++;
 // End g30
 
@@ -204,7 +206,7 @@ g32:
 /* k */ *--d = 0;
 /* 5 */ *d *= 10; *d += 5;
 /* g */ *--c = &&g34; goto *gs[*d++]; g34:;
-/* & */ d[1] &= *d++;
+/* & */ d[1] &= *d; d++;
 /*   */ ;
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;
@@ -225,8 +227,8 @@ g32:
 /* T */ *--d = 3;
 /* g */ *--c = &&g37; goto *gs[*d++]; g37:;
 /* v */ *(f*)d = (f)*d;
-/* D */ ((f*)d)[1] /= *(f*)d++;
-/* A */ ((f*)d)[1] += *(f*)d++;
+/* D */ ((f*)d)[1] /= *(f*)d; d++;
+/* A */ ((f*)d)[1] += *(f*)d; d++;
 /* ] */ goto **c++;
 // End g32
 
@@ -238,7 +240,7 @@ header:
 /* k */ *--d = 0;
 /* 1 */ *d *= 10; *d += 1;
 /* 5 */ *d *= 10; *d += 5;
-/* a */ d[1] += *d++;
+/* a */ d[1] += *d; d++;
 /* K */ *--d = 1;
 /* n */ *d = -*d;
 /* g */ *--c = &&g1; goto *gs[*d++]; g1:;

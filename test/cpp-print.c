@@ -1,9 +1,11 @@
 #include<stdio.h>
 #include<unistd.h>
+#include<stdlib.h>
+
 #define DATA_S 1048576
 #define CODE_S 32768
-#define start(x) fprintf(stderr, "\n%""8s", x)
-#define trace fprintf(stderr, "%""8d|x%""8d|s%""6d|c%""20lld|v%""20lld|dv%""20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
+#define start(x) fprintf(stderr, "\n%8s", x)
+#define trace fprintf(stderr, "%8d|x%8d|s%6d|c%20lld|v%20lld|dv%20lf|V", D - dtmp, data + DATA_S - d, code + CODE_S - c, *d, *d - (long long)&main, *d)
 
 typedef long long e;
 typedef double f;
@@ -24,12 +26,12 @@ e *j = 0;
 *--c = &&exit;
 goto main;
 exit: return *d;
-pr_int: printf("%""d\n", *d++); goto **c++;
+pr_int: printf("%d\n", *d++); goto **c++;
 pr_float: printf("%f\n", *d++); goto **c++;
 pr_stacks:
-fprintf(stderr, "\n[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - d, *j, *j - (e)(&main), *j);
-fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%""4d|i%""20d|v%""20d|dv%""20f|V\n", j - dtmp, *j, *j - (e)(&main), *j);
-fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%""4d|i%""20d|dv\n", j - c, *j - (e)(&main));
+fprintf(stderr, "\n[data]\n"); for(j = d; j < data + DATA_S; ++j) fprintf(stderr, "%4d|i%20lld|v%20lld|dv%20lf|V\n", j - d, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[daux]\n"); for(j = dtmp; j < D; ++j) fprintf(stderr, "%4d|i%20lld|v%20lld|dv%20lf|V\n", j - dtmp, *j, *j - (e)(&main), *j);
+fprintf(stderr, "[code]\n"); for(j = c; j < code + CODE_S; ++j) fprintf(stderr, "%4d|i%20lld|dv\n", j - c, *j - (e)(&main));
 goto **c++;
 sleep_ms: usleep(*d++ * 1000); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
@@ -43,7 +45,7 @@ g1:
 
 // Begin g2: [. [.[a]z E tsI] [,w, k101ngk] /]
 g2:
-/* . */ *--d = d[1];
+/* . */ --d; *d = d[1];
 /*   */ ;
 /* [ */ *--d = &&g3;
 /*   */ ;
@@ -55,7 +57,7 @@ g2:
 
 // Begin g3: [.[a]z E tsI]
 g3:
-/* . */ *--d = d[1];
+/* . */ --d; *d = d[1];
 /* [ */ *--d = &&g4;
 /* z */ tmp = *d++; *D++=*d++; *--c = &&g5; goto *tmp; g5: *--d = *--D;
 /*   */ ;
@@ -69,7 +71,7 @@ g3:
 
 // Begin g4: [a]
 g4:
-/* a */ d[1] += *d++;
+/* a */ d[1] += *d; d++;
 /* ] */ goto **c++;
 // End g4
 

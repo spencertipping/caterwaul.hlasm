@@ -37,21 +37,21 @@ sleep_ms: usleep(*d++ * 1000); goto **c++;
 std_call: (*(void(*)())d++)(); goto **c++;
 write_c: putc((char) *d++, stdout); goto **c++;
 
-// Begin g1: [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]
-g1:fprintf(stderr, "\n%s %d %s", "g1", &&g1 - (long long)&main, "[k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]");
+// Begin g1: [k6sk14b.K0S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]
+g1:fprintf(stderr, "\n%s %d %s", "g1", &&g1 - (long long)&main, "[k6sk14b.K0S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]");
 /* k */ start("k"); *--d = 0; trace;
 /* 6 */ start("6"); *d *= 10; *d += 6; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* k */ start("k"); *--d = 0; trace;
 /* 1 */ start("1"); *d *= 10; *d += 1; trace;
 /* 4 */ start("4"); *d *= 10; *d += 4; trace;
-/* b */ start("b"); d[1] -= *d++; trace;
-/* . */ start("."); *--d = d[1]; trace;
-/* k */ start("k"); *--d = 0; trace;
-/* 9 */ start("9"); *d *= 10; *d += 9; trace;
+/* b */ start("b"); d[1] -= *d; d++; trace;
+/* . */ start("."); --d; *d = d[1]; trace;
+/* K */ start("K"); *--d = 1; trace;
+/* 0 */ start("0"); *d *= 10; *d += 0; trace;
 /* S */ start("S"); d[*d] = d[1]; d += 2; trace;
 /*   */ start(" "); ; trace;
-/* . */ start("."); *--d = d[1]; trace;
+/* . */ start("."); --d; *d = d[1]; trace;
 /* k */ start("k"); *--d = 0; trace;
 /* 4 */ start("4"); *d *= 10; *d += 4; trace;
 /* S */ start("S"); d[*d] = d[1]; d += 2; trace;
@@ -80,7 +80,7 @@ g3:fprintf(stderr, "\n%s %d %s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,]z .TS
 /* [ */ *--d = &&g4;
 /* z */ start("z"); tmp = *d++; *D++=*d++; *--c = &&g5; goto *tmp; g5: *--d = *--D; trace;
 /*   */ start(" "); ; trace;
-/* . */ start("."); *--d = d[1]; trace;
+/* . */ start("."); --d; *d = d[1]; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* S */ start("S"); d[*d] = d[1]; d += 2; trace;
 /*   */ start(" "); ; trace;
@@ -98,7 +98,7 @@ g3:fprintf(stderr, "\n%s %d %s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,]z .TS
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* K */ start("K"); *--d = 1; trace;
 /* < */ start("<"); d[1] <<= *d++; trace;
-/* a */ start("a"); d[1] += *d++; trace;
+/* a */ start("a"); d[1] += *d; d++; trace;
 /*   */ start(" "); ; trace;
 /* k */ start("k"); *--d = 0; trace;
 /* 7 */ start("7"); *d *= 10; *d += 7; trace;
@@ -110,13 +110,13 @@ g3:fprintf(stderr, "\n%s %d %s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,]z .TS
 /* k */ start("k"); *--d = 0; trace;
 /* 5 */ start("5"); *d *= 10; *d += 5; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
-/* c */ start("c"); d[1] *= *d++; trace;
+/* c */ start("c"); d[1] *= *d; d++; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* s */ start("s"); *d = d[*d + 1]; trace;
-/* c */ start("c"); d[1] *= *d++; trace;
-/* a */ start("a"); d[1] += *d++; trace;
+/* c */ start("c"); d[1] *= *d; d++; trace;
+/* a */ start("a"); d[1] += *d; d++; trace;
 /* t */ start("t"); *--d = 2; trace;
 /* S */ start("S"); d[*d] = d[1]; d += 2; trace;
 /*   */ start(" "); ; trace;
@@ -133,7 +133,7 @@ g3:fprintf(stderr, "\n%s %d %s", "g3", &&g3 - (long long)&main, "[Ksk5sd[,]z .TS
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* < */ start("<"); d[1] <<= *d++; trace;
-/* a */ start("a"); d[1] += *d++; trace;
+/* a */ start("a"); d[1] += *d; d++; trace;
 /*   */ start(" "); ; trace;
 /* k */ start("k"); *--d = 0; trace;
 /* 1 */ start("1"); *d *= 10; *d += 1; trace;
@@ -176,13 +176,13 @@ g7:fprintf(stderr, "\n%s %d %s", "g7", &&g7 - (long long)&main, "[k6sTsT<a*]");
 /* s */ start("s"); *d = d[*d + 1]; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* < */ start("<"); d[1] <<= *d++; trace;
-/* a */ start("a"); d[1] += *d++; trace;
+/* a */ start("a"); d[1] += *d; d++; trace;
 /* * */ start("*"); *d = *(e*)(*d); trace;
 /* ] */ start("]"); goto **c++; trace;
 // End g7
 
-// Begin main: K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k
-main:fprintf(stderr, "\n%s %d %s", "main", &&main - (long long)&main, "K k52514.T<mw k10000.. kwk [k6sk14b.k9S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k");
+// Begin main: K k52514.T<mw k10000.. kwk [k6sk14b.K0S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k
+main:fprintf(stderr, "\n%s %d %s", "main", &&main - (long long)&main, "K k52514.T<mw k10000.. kwk [k6sk14b.K0S .k4S [[Ksk5sd[,]z .TS k4S tsETS tsK<a k7s[k4sk5d,][k6sTsT<a*]? k5scTsTscatS EKsd k7sk4sT<a k103ng = KS]zI]F]y k6sM k7+ k");
 /* K */ start("K"); *--d = 1; trace;
 /*   */ start(" "); ; trace;
 /* k */ start("k"); *--d = 0; trace;
@@ -191,7 +191,7 @@ main:fprintf(stderr, "\n%s %d %s", "main", &&main - (long long)&main, "K k52514.
 /* 5 */ start("5"); *d *= 10; *d += 5; trace;
 /* 1 */ start("1"); *d *= 10; *d += 1; trace;
 /* 4 */ start("4"); *d *= 10; *d += 4; trace;
-/* . */ start("."); *--d = d[1]; trace;
+/* . */ start("."); --d; *d = d[1]; trace;
 /* T */ start("T"); *--d = 3; trace;
 /* < */ start("<"); d[1] <<= *d++; trace;
 /* m */ start("m"); *(unsigned long long*)d = malloc(*d); trace;
@@ -203,8 +203,8 @@ main:fprintf(stderr, "\n%s %d %s", "main", &&main - (long long)&main, "K k52514.
 /* 0 */ start("0"); *d *= 10; *d += 0; trace;
 /* 0 */ start("0"); *d *= 10; *d += 0; trace;
 /* 0 */ start("0"); *d *= 10; *d += 0; trace;
-/* . */ start("."); *--d = d[1]; trace;
-/* . */ start("."); *--d = d[1]; trace;
+/* . */ start("."); --d; *d = d[1]; trace;
+/* . */ start("."); --d; *d = d[1]; trace;
 /*   */ start(" "); ; trace;
 /* k */ start("k"); *--d = 0; trace;
 /* w */ start("w"); tmp = *d; *d = d[1]; d[1] = tmp; trace;

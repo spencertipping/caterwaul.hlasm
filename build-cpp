@@ -1,5 +1,18 @@
 #!/bin/bash
 # Runs a C++ test case, runs GCC, and executes.
 
-./build test $1 > test/$1.c
-gcc -g -O0 test/$1.c -o test/$1 && ./test/$1
+gcc='gcc -Wall -Wextra -g'
+
+for file in test/$1*.sdoc; do
+  sdoc $file
+
+  name=${file%%.js.sdoc}
+
+  ./build test ${name##test/} > $name.c
+  $gcc -O0 $name.c -S -o $name-o0.s && \
+  $gcc -O1 $name.c -S -o $name-o1.s && \
+  $gcc -O2 $name.c -S -o $name-o2.s && \
+  $gcc -O0 $name.c -o $name-o0 && \
+  $gcc -O1 $name.c -o $name-o1 && \
+  $gcc -O2 $name.c -o $name-o2
+done
